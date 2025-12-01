@@ -1,140 +1,402 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Daftar Channel</title>
-   <link rel='stylesheet' href='https://tvsport.pages.dev/style.css' crossorigin='anonymous'/>
-   <script src="https://pisionx.pages.dev/dazn.js"></script>
-<style>
-     body {
-            background: #000; /* url('https://pidio.pages.dev/img/timnas.jpg') no-repeat center center fixed;*/
-            background-size: cover;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Pertandingan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .filter-btn.active {
+            background: #ff5722;
+            box-shadow: 0 4px 10px rgba(255, 87, 34, 0.4);
+        }
+
+        .league-title {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.5rem;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .match-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 10px;
+            margin-bottom: 40px;
+        }
+
+        .match-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .match-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .match-time {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #ffcc00;
+            font-size: 1.1rem;
+        }
+
+        .team-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .team {
             display: flex;
             flex-direction: column;
-            justify-content: flex-start; /* Ubah ke flex-start agar konten dimulai dari atas */
-            h3 {
-            color: rgb(246, 246, 248);
-            font-size: 0.8rem; /* Tingkatkan ukuran font untuk header */
-            margin: 0; /* Hapus margin untuk mengatur posisi header */
+            align-items: center;
+            width: 40%;
         }
 
-    
-
-    .channel {
-      background-color: white;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-align: center;
-            font-size: 12px;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-   .channel:hover {
-      transform: scale(1.05);
-    }
-
-
-    .channel img {
-      width: 100%;
-            max-height: 50px;
+        .team img {
+            width: 60px;
+            height: 60px;
             object-fit: contain;
-            margin-bottom: 5px;
-        }
-    .channel a {
-      text-decoration: none;
-      font-weight: bold;
-            color: #34495e;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 50%;
+            padding: 5px;
         }
 
-    button#refreshBtn {
-      background-color: white;
-      color: black;
-      border: none;
-      padding: 10px 5px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 14px;
-      margin-bottom: 20px;
-      transition: background 0.2s;
-    }
+        .vs {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #ffcc00;
+        }
 
-    button#refreshBtn:hover {
-      background-color: blue;
-    }
+        .score {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+            color: #ffcc00;
+        }
 
-    footer {
-      margin-bottom: 15px;
-    }
+        .stream-links {
+            text-align: center;
+        }
 
-    footer h3 {
-      color: rgb(246, 246, 248);
-      font-size: 0.8rem;
-      margin: 0;
-      text-align: center;
-    }
-  </style>
-   <script type='text/javascript' src='//pl27364347.effectivegatecpm.com/43/6d/57/436d57638d6f3b298f07f4242ce6eab7.js'></script>
- 
+        .stream-link {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(to right, #ff5722, #ff9800);
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(255, 87, 34, 0.4);
+        }
+
+        .stream-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(255, 87, 34, 0.6);
+        }
+
+        .loading, .error, .no-matches {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            grid-column: 1 / -1;
+        }
+
+        .match-status {
+            text-align: center;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            color: #4caf50;
+            font-weight: bold;
+        }
+
+        .match-status.live {
+            color: #ff5722;
+            animation: pulse 1.5s infinite;
+        }
+
+        .match-status.finished {
+            color: #9e9e9e;
+        }
+
+        .stream-info {
+            text-align: center;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            color: #ffcc00;
+            opacity: 0.8;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .match-container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+  <script type='text/javascript' src='//zoologicalmanufacture.com/3b/87/bb/3b87bb180475e87b0df9e00113d4d7c2.js'></script>
 </head>
 <body>
+    <div class="container">
+        <h2 id="league-title" class="league-title">Netx Tv</h2>
+        <div class="match-container" id="matches">
+            <div class="loading">Memuat pertandingan...</div>
+        </div>
+    </div>
 
-  <div class="channel-grid" id="channelGrid"></div>
- <!-- <button id="refreshBtn">🔄 Kalau Eror Semua Klik ini Bwang</button>
-  -->
-  <footer><h3>&copy; HATI HATI KEGOCEK IKLAN</h3></footer>
+    <footer>
+        <p>© 2025 Netxtv - Hak Cipta Dilindungi</p>
+    </footer>
 
-  <script>
-    const dataUrl = "https://tvsport.pages.dev/data/event.js";
-
-    function getGroupId() {
-      const p = new URLSearchParams(window.location.search);
-      return p.get("id") || "bsl1";
-    }
-
-    async function loadChannels() {
-      const grid = document.getElementById("channelGrid");
-      const selectedGroup = getGroupId();
-      grid.innerHTML = `<p>Loading Bang Hehehehe: ${selectedGroup}</p>`;
-
-      try {
-        const res = await fetch(dataUrl + "?t=" + Date.now());
-        const data = await res.json();
-        const { channels, groups } = data;
-
-        grid.innerHTML = "";
-        const list = groups[selectedGroup];
-        if (!list) {
-          grid.innerHTML = `<p style="color:red;">Kalau "${selectedGroup}" Lagi Diperbaiki Bwangg Hehehe</p>`;
-          return;
+    <script>
+        // Fungsi untuk memformat tanggal
+        function formatMatchTime(dateString) {
+            // Format: "07/11/2025 03:00 WIB"
+            const parts = dateString.split(' ');
+            if (parts.length < 2) return dateString;
+            
+            const datePart = parts[0];
+            const timePart = parts[1];
+            
+            const [day, month, year] = datePart.split('/');
+            const date = new Date(`${year}-${month}-${day}T${timePart}`);
+            
+            const options = { 
+                day: 'numeric', 
+                month: 'long', 
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            };
+            return date.toLocaleDateString('id-ID', options);
         }
 
-        list.forEach(id => {
-          const ch = channels[id];
-          if (!ch) return;
-          const el = document.createElement("div");
-          el.className = "channel";
-          el.innerHTML = `
-            <a href="${ch.href}">
-              <img src="${ch.img}" alt="${ch.name}">
-              <div>${ch.name}</div>
-            </a>
-          `;
-          grid.appendChild(el);
+        // Fungsi untuk mendapatkan parameter URL
+        function getUrlParameter(name) {
+            name = name.replace(/[\[\]]/g, '\\$&');
+            const regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
+            const results = regex.exec(window.location.href);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+
+        // Fungsi untuk mendapatkan status pertandingan
+        function getMatchStatus(match) {
+            if (match.state === 1) {
+                return 'LIVE';
+            } else if (match.state === 2) {
+                return 'SELESAI';
+            } else {
+                return 'AKAN DATANG';
+            }
+        }
+
+        // Fungsi untuk mendapatkan link stream berdasarkan parameter type dengan penomoran
+        function getStreamLink(streamType, index) {
+            if (streamType) {
+                return `go:${streamType}${index + 1}`;
+            }
+            return `go:${match.matchId}`;
+        }
+
+        // Fungsi untuk memuat dan menampilkan pertandingan
+        async function loadMatches(leagueId = null) {
+            const matchesContainer = document.getElementById('matches');
+            const leagueTitle = document.getElementById('league-title');
+            
+            try {
+                // Tampilkan loading
+                matchesContainer.innerHTML = '<div class="loading">Memuat pertandingan...</div>';
+                
+                // Ambil data dari API
+                const response = await fetch('https://tvsport.pages.dev/data/menu.js');
+                
+                if (!response.ok) {
+                    throw new Error('Gagal mengambil data dari API');
+                }
+                
+                const dataText = await response.text();
+                
+                // Parse data JSON (menghapus karakter yang tidak diperlukan jika ada)
+                let matches;
+                try {
+                    // Coba parse langsung sebagai JSON
+                    matches = JSON.parse(dataText);
+                } catch (e) {
+                    // Jika gagal, coba ekstrak JSON dari string
+                    const jsonMatch = dataText.match(/\[.*\]/s);
+                    if (jsonMatch) {
+                        matches = JSON.parse(jsonMatch[0]);
+                    } else {
+                        throw new Error('Format data tidak valid');
+                    }
+                }
+                
+                // Filter berdasarkan leagueId jika disediakan
+                let filteredMatches = matches;
+                if (leagueId && leagueId !== 'all') {
+                    filteredMatches = matches.filter(match => match.leagueId == leagueId);
+                }
+                
+                // Update judul liga
+                if (leagueId && leagueId !== 'all' && filteredMatches.length > 0) {
+                    leagueTitle.textContent = filteredMatches[0].leagueEn;
+                } else {
+                    leagueTitle.textContent = 'Semua Pertandingan';
+                }
+                
+                // Kosongkan container
+                matchesContainer.innerHTML = '';
+                
+                // Tampilkan pesan jika tidak ada pertandingan
+                if (filteredMatches.length === 0) {
+                    matchesContainer.innerHTML = '<div class="no-matches">Tidak ada pertandingan yang tersedia</div>';
+                    return;
+                }
+                
+                // Dapatkan parameter type dari URL
+                const streamType = getUrlParameter('type');
+                
+                // Buat elemen untuk setiap pertandingan
+                filteredMatches.forEach((match, index) => {
+                    const matchCard = document.createElement('div');
+                    matchCard.className = 'match-card';
+                    
+                    const matchStatus = getMatchStatus(match);
+                    const statusClass = match.state === 1 ? 'live' : match.state === 2 ? 'finished' : 'upcoming';
+                    const streamLink = getStreamLink(streamType, index);
+                    
+                    matchCard.innerHTML = `
+                        <div class="match-status ${statusClass}">${matchStatus}</div>
+                        <div class="match-time">${formatMatchTime(match.matchTimeWIB)}</div>
+                        <div class="team-info">
+                            <div class="team">
+                                <img src="${match.homeLogoUrl}" alt="${match.homeName}" onerror="this.src='https://via.placeholder.com/60x60/333/fff?text=${match.homeName.substring(0, 3)}'">
+                                <div>${match.homeName}</div>
+                            </div>
+                            <div class="vs">VS</div>
+                            <div class="team">
+                                <img src="${match.awayLogoUrl}" alt="${match.awayName}" onerror="this.src='https://via.placeholder.com/60x60/333/fff?text=${match.awayName.substring(0, 3)}'">
+                                <div>${match.awayName}</div>
+                            </div>
+                        </div>
+                        ${match.state !== 0 ? `<div class="score">${match.homeScore} - ${match.awayScore}</div>` : ''}
+                        <div class="stream-links">
+                            <a href="${streamLink}" class="stream-link" target="_blank">
+                                WATCH NOW! 📺
+                            </a>
+                        </div>
+                    `;
+                    
+                    matchesContainer.appendChild(matchCard);
+                });
+            } catch (error) {
+                console.error('Error loading matches:', error);
+                matchesContainer.innerHTML = '<div class="error">Gagal memuat pertandingan: ' + error.message + '</div>';
+            }
+        }
+
+        // Inisialisasi saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dapatkan parameter ID dari URL
+            const urlLeagueId = getUrlParameter('id');
+            
+            // Tentukan leagueId yang akan digunakan
+            const initialLeagueId = urlLeagueId || 'all';
+            
+            // Muat pertandingan
+            loadMatches(initialLeagueId);
         });
-
-      } catch (e) {
-        grid.innerHTML = `<p style="color:red;">Eror Bang Hehehehehe: ${e.message}</p>`;
-      }
-    }
-
-    loadChannels();
-    document.getElementById("refreshBtn").onclick = () => location.reload();
-  </script>
-
+    </script>
 </body>
 </html>
