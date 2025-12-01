@@ -9,7 +9,7 @@
     "leagueId": 34,
     "homeScore": 0,
     "awayScore": 0,
-    "state": 0,
+    "state": 1,
     "matchTime_t": 1764618300000,
     "matchTimeWIB": "02/12/2025 02:45 WIB",
     "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
