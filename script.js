@@ -1,6 +1,6 @@
 [
   {
-    "leagueEn": "Asia: SEA Games - Sepak Bola Wanita",
+    "leagueEn": "Asia: SEA Games - Sepak Bola ",
     "homeName": "Myanmar (W)",
     "awayName": "Filipina (W)",
     "homeLogoUrl": "https://tg.selina49.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/1gzfp9hsge1h.png",
@@ -15,7 +15,7 @@
     "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
   },
   {
-    "leagueEn": "Asia: SEA Games - Sepak Bola Pria",
+    "leagueEn": "Asia: SEA Games - Sepak Bola ",
     "homeName": "Myanmar U22",
     "awayName": "Filipina U22",
     "homeLogoUrl": "https://tg.selina42.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/1gzfp90bn1c.png",
@@ -30,7 +30,7 @@
     "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
   },
   {
-    "leagueEn": "Asia: SEA Games - Sepak Bola Wanita",
+    "leagueEn": "Asia: SEA Games - Sepak Bola",
     "homeName": "Vietnam (W)",
     "awayName": "Malaysia (W)",
     "homeLogoUrl": "https://tg.selina19.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/1h5420r56r1x.png",
