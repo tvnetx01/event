@@ -30,21 +30,6 @@
     "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
   },
   {
-    "leagueEn": "Inggris: Liga Primer",
-    "homeName": "Aston Villa",
-    "awayName": "Arsenal",
-    "homeLogoUrl": "https://tg.selina51.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/1kbkd5txg51h.png",
-    "awayLogoUrl": "https://tg.selina45.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/164577419697.png",
-    "matchId": 2789269,
-    "leagueId": 36,
-    "homeScore": 0,
-    "awayScore": 0,
-    "state": 0,
-    "matchTime_t": 1765024200000,
-    "matchTimeWIB": "06/12/2025 19:30 WIB",
-    "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
-  },
-  {
     "leagueEn": "Spanyol: LaLiga",
     "homeName": "Villarreal",
     "awayName": "Getafe",
