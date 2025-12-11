@@ -389,7 +389,6 @@
     "matchTimeWIB": "12/12/2025 03:00 WIB",
      "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
   },
-]
       {
     "leagueEn": "Eropa: Europa League",
     "homeName": "Celta Vigo",
@@ -405,4 +404,5 @@
     "matchTimeWIB": "12/12/2025 03:00 WIB",
     "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
   }
+  ]
 ]
