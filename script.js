@@ -180,6 +180,21 @@
     "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
   },
   {
+    "leagueEn": "Eropa: Liga Konferensi Eropa",
+    "homeName": "Fiorentina",
+    "awayName": "Dyn. Kiev",
+    "homeLogoUrl": "https://tg.selina19.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/176/1hxqrpz41w1v.png",
+    "awayLogoUrl": "https://tg.selina38.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/712/1h53w1vb5v27.png",
+    "matchId": 2862162,
+    "leagueId": 2187,
+    "homeScore": 0,
+    "awayScore": 0,
+    "state": 0,
+    "matchTime_t": 1765475100000,
+    "matchTimeWIB": "12/12/2025 00:45 WIB",
+    "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
+  },
+  {
     "leagueEn": "Eropa: Europa League",
     "homeName": "Utrecht",
     "awayName": "Nottingham",
@@ -328,5 +343,66 @@
     "matchTime_t": 1765483200000,
     "matchTimeWIB": "12/12/2025 03:00 WIB",
     "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
-  }
+  },
+  {
+    "leagueEn": "Eropa: Liga Konferensi Eropa",
+    "homeName": "Aberdeen",
+    "awayName": "Strasbourg",
+    "homeLogoUrl": "https://tg.selina35.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/165363467632.png",
+    "awayLogoUrl": "https://tg.selina52.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/164871181440.png",
+    "matchId": 2862236,
+    "leagueId": 2187,
+    "homeScore": 0,
+    "awayScore": 0,
+    "state": 0,
+    "matchTime_t": 1765483200000,
+    "matchTimeWIB": "12/12/2025 03:00 WIB",
+    "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
+  },
+  {
+    "leagueEn": "Eropa: Liga Konferensi Eropa",
+    "homeName": "Lech Poznan",
+    "awayName": "Mainz",
+    "homeLogoUrl": "https://tg.selina25.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/1142/1gv1yreqw4d.png",
+    "awayLogoUrl": "https://tg.selina24.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/164871151364.png",
+    "matchId": 2862218,
+    "leagueId": 2187,
+    "homeScore": 0,
+    "awayScore": 0,
+    "state": 0,
+    "matchTime_t": 1765483200000,
+    "matchTimeWIB": "12/12/2025 03:00 WIB",
+    "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
+  },
+  {
+    "leagueEn": "Eropa: Liga Konferensi Eropa",
+    "homeName": "Shelbourne",
+    "awayName": "Crystal Palace",
+    "homeLogoUrl": "https://tg.selina4.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/315/1grd5f04es2w.png",
+    "awayLogoUrl": "https://tg.selina23.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/164577426766.png",
+    "matchId": 2862217,
+    "leagueId": 2187,
+    "homeScore": 0,
+    "awayScore": 0,
+    "state": 0,
+    "matchTime_t": 1765483200000,
+    "matchTimeWIB": "12/12/2025 03:00 WIB",
+     "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
+  },
+]
+      {
+    "leagueEn": "Eropa: Europa League",
+    "homeName": "Celta Vigo",
+    "awayName": "Bologna",
+    "homeLogoUrl": "https://tg.selina49.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/164871275971.png",
+    "awayLogoUrl": "https://tg.selina14.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/16486905420.png",
+    "matchId": 2862140,
+    "leagueId": 113,
+    "homeScore": 0,
+    "awayScore": 0,
+    "state": 0,
+    "matchTime_t": 1765483200000,
+    "matchTimeWIB": "12/12/2025 03:00 WIB",
+    "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
+  },
 ]
