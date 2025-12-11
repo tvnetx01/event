@@ -405,4 +405,4 @@
     "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
   }
   ]
-]
+
