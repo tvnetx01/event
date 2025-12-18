@@ -73,5 +73,66 @@
     "matchTime_t": 1766088000000,
     "matchTimeWIB": "19/12/2025 03:00 WIB",
     "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
+  },
+  
+  {
+    "leagueEn": "Eropa: Liga Konferensi Eropa",
+    "homeName": "Lausanne",
+    "awayName": "Fiorentina",
+    "homeLogoUrl": "https://tg.selina45.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/2601/1j0ytn4xd41b.png",
+    "awayLogoUrl": "https://tg.selina54.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/176/1hxqrpz41w1v.png",
+    "matchId": 2862161,
+    "leagueId": 2187,
+    "homeScore": 0,
+    "awayScore": 0,
+    "state": 0,
+    "matchTime_t": 1766088000000,
+    "matchTimeWIB": "19/12/2025 03:00 WIB",
+    "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
+  },
+  {
+    "leagueEn": "Eropa: Liga Konferensi Eropa",
+    "homeName": "Crystal Palace",
+    "awayName": "KuPS",
+    "homeLogoUrl": "https://tg.selina40.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/164577426766.png",
+    "awayLogoUrl": "https://tg.selina17.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/165724440393.png",
+    "matchId": 2862214,
+    "leagueId": 2187,
+    "homeScore": 0,
+    "awayScore": 0,
+    "state": 0,
+    "matchTime_t": 1766088000000,
+    "matchTimeWIB": "19/12/2025 03:00 WIB",
+    "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
+  },
+  {
+    "leagueEn": "Eropa: Liga Konferensi Eropa",
+    "homeName": "Mainz",
+    "awayName": "Samsunspor",
+    "homeLogoUrl": "https://tg.selina48.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/164871151364.png",
+    "awayLogoUrl": "https://tg.selina16.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/1560/1j2wft296j13.png",
+    "matchId": 2862234,
+    "leagueId": 2187,
+    "homeScore": 0,
+    "awayScore": 0,
+    "state": 0,
+    "matchTime_t": 1766088000000,
+    "matchTimeWIB": "19/12/2025 03:00 WIB",
+    "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
+  },
+  {
+    "leagueEn": "Eropa: Liga Konferensi Eropa",
+    "homeName": "Strasbourg",
+    "awayName": "Breidablik",
+    "homeLogoUrl": "https://tg.selina8.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/164871181440.png",
+    "awayLogoUrl": "https://tg.selina44.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/165363440831.png",
+    "matchId": 2862237,
+    "leagueId": 2187,
+    "homeScore": 0,
+    "awayScore": 0,
+    "state": 0,
+    "matchTime_t": 1766088000000,
+    "matchTimeWIB": "19/12/2025 03:00 WIB",
+    "baseStreamUrl": "https://ppdd10.playerktidfintkd.shop/live.html?_pa={encodedParams}&_pb=4"
   }
 ]
