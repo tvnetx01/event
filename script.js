@@ -6,7 +6,7 @@
     "homeLogoUrl": "https://tg.selina9.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/16486905420.png",
     "awayLogoUrl": "https://tg.selina52.workers.dev/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/1kb93m6jew28.png",
     "matchId": 2893431,
-    "leagueId": 264,
+    "leagueId": 34,
     "homeScore": 0,
     "awayScore": 0,
     "state": 0,
