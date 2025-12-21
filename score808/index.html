@@ -68,13 +68,13 @@ body{
 <script>
 let CFG, currentWorker;
 
-/* ================= LOAD CONFIG ================= */
+/* ========== LOAD CONFIG ========== */
 async function loadConfig(){
   const r = await fetch('https://pisionx.pages.dev/api/tigoals.js');
   CFG = await r.json();
 }
 
-/* ================= WORKER ================= */
+/* ========== WORKER & LOGO ========== */
 function getRandomWorker(tried=[]){
   const max = CFG.proxyDomains.maxRange;
   const skip = CFG.proxyDomains.skip || [];
@@ -105,7 +105,7 @@ function retryWorker(img, original, tried=[]){
   img.src=getLogoUrl(original);
 }
 
-/* ================= UTIL ================= */
+/* ========== UTIL ========== */
 const qs=n=>new URLSearchParams(location.search).get(n);
 const matchStatus=m=>m.state===1?'LIVE':m.state===2?'SELESAI':'AKAN DATANG';
 const matchTime=ts=>new Date(ts).toLocaleString('id-ID',{
@@ -113,7 +113,7 @@ const matchTime=ts=>new Date(ts).toLocaleString('id-ID',{
   day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'
 });
 
-/* ================= LOAD MATCH ================= */
+/* ========== LOAD MATCHES ========== */
 async function loadMatches(){
   const box=document.getElementById('matches');
   const title=document.getElementById('league-title');
@@ -141,14 +141,7 @@ async function loadMatches(){
       list=list.filter(m=>m.matchType==Number(typeParam));
     }
 
-    document.getElementById('searchInput').oninput=e=>{
-      const q=e.target.value.toLowerCase();
-      render(list.filter(m=>
-        m.homeName.toLowerCase().includes(q)||
-        m.awayName.toLowerCase().includes(q)||
-        m.leagueEn.toLowerCase().includes(q)
-      ));
-    };
+    const typeCounter = {}; // 🔥 COUNTER PER matchType
 
     function render(arr){
       box.innerHTML='';
@@ -156,18 +149,25 @@ async function loadMatches(){
         box.innerHTML='<div class="no-matches">Tidak ada pertandingan</div>';return;
       }
 
-      arr.forEach((m,i)=>{
+      arr.forEach(m=>{
+        typeCounter[m.matchType] = (typeCounter[m.matchType] || 0) + 1;
+        const idx = typeCounter[m.matchType];
+
         let stream;
         if(leagueId && goParam){
-          stream=`${goParam}${i+1}`;
+          stream = `${goParam}${idx}`;
         }else if(goParam){
-          stream=goParam;
+          stream = goParam;
         }else if(typeParam && isNaN(typeParam)){
-          stream=typeParam;
+          stream = typeParam;
         }else{
-          if(m.matchType===2) stream=`nba${i+1}`;
-          else if(m.matchType===1) stream=`s808${i+1}`;
-          else stream=`${m.matchType}${i+1}`;
+          if(m.matchType === 2){
+            stream = `nba${idx}`;
+          }else if(m.matchType === 1){
+            stream = `s808${idx}`;
+          }else{
+            stream = `${idx}`; // fallback
+          }
         }
 
         const c=document.createElement('div');
@@ -179,7 +179,7 @@ async function loadMatches(){
           <div class="team-info">
             <div class="team">
               <img src="${getLogoUrl(m.homeLogoUrl)}"
-                onerror="retryWorker(this,'${m.homeLogoUrl}')">
+                   onerror="retryWorker(this,'${m.homeLogoUrl}')">
               <div>${m.homeName}</div>
             </div>
 
@@ -187,7 +187,7 @@ async function loadMatches(){
 
             <div class="team">
               <img src="${getLogoUrl(m.awayLogoUrl)}"
-                onerror="retryWorker(this,'${m.awayLogoUrl}')">
+                   onerror="retryWorker(this,'${m.awayLogoUrl}')">
               <div>${m.awayName}</div>
             </div>
           </div>
@@ -209,7 +209,7 @@ async function loadMatches(){
   }
 }
 
-/* ================= INIT ================= */
+/* ========== INIT ========== */
 (async()=>{
   await loadConfig();
   currentWorker=getRandomWorker();
@@ -218,5 +218,6 @@ async function loadMatches(){
   loadMatches();
 })();
 </script>
+
 </body>
 </html>
