@@ -6,44 +6,108 @@
 <title>Netxtv</title>
 
 <style>
+/* ===== RESET ===== */
 *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,Tahoma}
-body{background:linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);color:#fff;padding:20px}
+
+/* ===== BODY & BACKGROUND (FULL MULUS) ===== */
+html,body{
+  min-height:100%;
+}
+body{
+  background:linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);
+  background-attachment:fixed;
+  color:#fff;
+  padding:20px;
+}
+
+/* ===== CONTAINER ===== */
 .container{max-width:1100px;margin:auto}
+
+/* ===== TITLE ===== */
 .league-title{text-align:center;font-size:1.6rem;margin:15px 0}
 
+/* ===== SEARCH ===== */
 .search-box{text-align:center;margin-bottom:12px}
-.search-box input{max-width:420px;width:100%;padding:10px;border-radius:25px;border:none}
+.search-box input{
+  max-width:420px;width:100%;
+  padding:10px 14px;border-radius:25px;border:none;
+  outline:none
+}
 
-.filters{display:flex;gap:10px;justify-content:center;margin-bottom:15px}
+/* ===== FILTER ===== */
+.filters{
+  display:flex;gap:10px;justify-content:center;margin-bottom:15px
+}
 .filters button{
   padding:7px 16px;border:none;border-radius:20px;
-  background:rgba(255,255,255,.2);color:#fff;font-weight:bold;cursor:pointer
+  background:rgba(255,255,255,.2);
+  color:#fff;font-weight:bold;cursor:pointer
 }
 .filters button.active{background:#ff9800}
 
-.match-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(350px,1fr));gap:12px}
-.match-card{background:rgba(255,255,255,.12);border-radius:10px;padding:16px}
+/* ===== MATCH GRID ===== */
+.match-container{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(350px,1fr));
+  gap:12px
+}
+
+/* ===== MATCH CARD ===== */
+.match-card{
+  background:rgba(255,255,255,.12);
+  border-radius:12px;
+  padding:16px;
+  backdrop-filter:blur(6px)
+}
+
 .match-time{text-align:center;color:#ffcc00;font-weight:bold}
-.team-info{display:flex;justify-content:space-between;align-items:center;margin:10px 0}
+
+.team-info{
+  display:flex;justify-content:space-between;align-items:center;margin:10px 0
+}
 .team{text-align:center;width:40%}
-.team img{width:60px;height:60px;background:#fff;border-radius:50%;padding:5px}
+.team img{
+  width:60px;height:60px;
+  background:#fff;border-radius:50%;
+  padding:5px;object-fit:contain
+}
 .vs{font-weight:bold;color:#ffcc00}
+
 .score{text-align:center;color:#ffcc00;font-size:1.4rem}
+
+/* ===== STREAM ===== */
 .stream-links{text-align:center;margin-top:10px}
-.stream-link{background:linear-gradient(to right,#ff5722,#ff9800);padding:8px 18px;border-radius:25px;color:#fff;text-decoration:none;font-weight:bold}
-.loading,.error,.no-matches{text-align:center;padding:30px}
+.stream-link{
+  background:linear-gradient(to right,#ff5722,#ff9800);
+  padding:8px 20px;border-radius:25px;
+  color:#fff;text-decoration:none;font-weight:bold;
+  display:inline-block
+}
+
+/* ===== STATE ===== */
+.no-matches{text-align:center;padding:30px}
+
+/* ===== HIDE ELEMENT ===== */
 .hidden{display:none}
+
+/* ===== 🔥 PENTING: HIDE SEARCH & FILTER SEJAK AWAL ===== */
+body.param-hide #searchBox,
+body.param-hide #filterBox{
+  display:none !important;
+}
 </style>
 </head>
 
-<body>
+<body class="param-hide">
 <div class="container">
   <h2 id="league-title" class="league-title"></h2>
 
+  <!-- SEARCH -->
   <div id="searchBox" class="search-box">
     <input id="search" placeholder="Cari tim atau liga...">
   </div>
 
+  <!-- FILTER -->
   <div id="filterBox" class="filters">
     <button data-type="all" class="active">ALL</button>
     <button data-type="1">FOOTBALL</button>
@@ -58,23 +122,23 @@ body{background:linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);color:#fff;paddi
 <script>
 let CFG, allMatches=[], activeFilter='all', currentWorker;
 
-/* ========= CONFIG ========= */
+/* ===== CONFIG ===== */
 async function loadConfig(){
-  const r = await fetch('https://pisionx.pages.dev/api/tigoals.js');
-  CFG = await r.json();
+  const r=await fetch('https://pisionx.pages.dev/api/tigoals.js');
+  CFG=await r.json();
 }
 
-/* ========= UTIL ========= */
-const qs = n => new URLSearchParams(location.search).get(n);
-const hasParam = () => location.search.length > 1;
+/* ===== UTIL ===== */
+const qs=n=>new URLSearchParams(location.search).get(n);
+const hasParam=()=>location.search.length>1;
 
-const time = t => new Date(t).toLocaleString('id-ID',{
+const time=t=>new Date(t).toLocaleString('id-ID',{
   timeZone:CFG.displaySettings.timezone,
   hour:'2-digit',minute:'2-digit'
 });
-const status = m => m.state===1?'LIVE':m.state===2?'SELESAI':'AKAN DATANG';
+const status=m=>m.state===1?'LIVE':m.state===2?'SELESAI':'AKAN DATANG';
 
-/* ========= WORKER ========= */
+/* ===== WORKER ===== */
 function randomWorker(tried=[]){
   let w;
   do{
@@ -86,7 +150,7 @@ function proxyUrl(w,path){
   return `${CFG.proxyDomains.prefix}${w}${CFG.proxyDomains.suffix}${path}`;
 }
 
-/* ========= LOGO ========= */
+/* ===== LOGO ===== */
 function logoUrl(url){
   if(!url) return CFG.logoUrlMapping.fallback;
 
@@ -114,7 +178,7 @@ function retry(img,original,tried=[]){
   img.src=logoUrl(original);
 }
 
-/* ========= RENDER ========= */
+/* ===== RENDER ===== */
 function render(){
   const box=document.getElementById('matches');
   const q=document.getElementById('search').value.toLowerCase();
@@ -140,8 +204,7 @@ function render(){
     return;
   }
 
-  const counter={};
-  const go=qs('go');
+  const counter={}, go=qs('go');
 
   list.forEach(m=>{
     counter[m.matchType]=(counter[m.matchType]||0)+1;
@@ -181,7 +244,7 @@ function render(){
   });
 }
 
-/* ========= INIT ========= */
+/* ===== INIT ===== */
 (async()=>{
   await loadConfig();
   currentWorker=randomWorker();
@@ -210,9 +273,9 @@ function render(){
 
   allMatches=list;
 
-  if(hasParam()){
-    document.getElementById('searchBox').classList.add('hidden');
-    document.getElementById('filterBox').classList.add('hidden');
+  /* 🔥 BUKA SEARCH & FILTER HANYA JIKA TANPA PARAM */
+  if(!hasParam()){
+    document.body.classList.remove('param-hide');
   }
 
   render();
