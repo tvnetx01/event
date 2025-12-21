@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Netxtv</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,Tahoma}
+body{
+  background:linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);
+  color:#fff;min-height:100vh;padding:20px
+}
+.container{max-width:1000px;margin:auto}
+.league-title{text-align:center;font-size:1.6rem;margin:20px 0}
+.match-container{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(350px,1fr));
+  gap:12px
+}
+.match-card{
+  background:rgba(255,255,255,.12);
+  border-radius:10px;
+  padding:18px
+}
+.match-time{text-align:center;color:#ffcc00;font-weight:bold;margin:8px 0}
+.team-info{display:flex;justify-content:space-between;align-items:center}
+.team{width:40%;text-align:center}
+.team img{
+  width:60px;height:60px;
+  background:#fff;border-radius:50%;padding:5px
+}
+.vs{font-weight:bold;color:#ffcc00}
+.score{text-align:center;font-size:1.4rem;color:#ffcc00;margin:6px 0}
+.stream-links{text-align:center;margin-top:10px}
+.stream-link{
+  background:linear-gradient(to right,#ff5722,#ff9800);
+  padding:8px 18px;border-radius:25px;
+  color:#fff;text-decoration:none;font-weight:bold
+}
+.match-status{text-align:center;font-weight:bold}
+.match-status.live{color:#ff5722}
+.loading,.error,.no-matches{text-align:center;padding:30px}
+@media(max-width:768px){.match-container{grid-template-columns:1fr}}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h2 id="league-title" class="league-title">Loading...</h2>
+  <div id="matches" class="match-container"></div>
+</div>
+
+<footer id="footer" style="text-align:center;margin-top:30px;opacity:.8"></footer>
+
+<script>
+/* =============================
+   LOAD CONFIG JSON
+============================= */
+let CFG;
+let currentWorker;
+
+async function loadConfig(){
+  const r = await fetch('https://pisionx.pages.dev/api/tigoals.js');
+  CFG = await r.json();
+}
+
+/* =============================
+   WORKER & LOGO
+============================= */
+function getRandomWorker(tried=[]){
+  const max = CFG.proxyDomains.maxRange;
+  const skip = CFG.proxyDomains.skip || [];
+  let w;
+  do{
+    w = Math.floor(Math.random()*max)+1;
+  }while(skip.includes(w) || tried.includes(w));
+  return w;
+}
+
+function buildProxy(worker, path){
+  return `${CFG.proxyDomains.prefix}${worker}${CFG.proxyDomains.suffix}${path}`;
+}
+
+function getLogoUrl(url){
+  if(!url) return CFG.logoUrlMapping.replaceBrokenLogo;
+  const path = url.replace(CFG.logoUrlMapping.source, '');
+  return buildProxy(currentWorker, `/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/${path}`);
+}
+
+function retryWorker(img, originalUrl, tried=[]){
+  tried.push(currentWorker);
+  if(tried.length >= CFG.proxyDomains.maxRange){
+    img.onerror=null;
+    img.src = CFG.logoUrlMapping.replaceBrokenLogo;
+    return;
+  }
+  currentWorker = getRandomWorker(tried);
+  img.onerror = ()=>retryWorker(img, originalUrl, tried);
+  img.src = getLogoUrl(originalUrl);
+}
+
+/* =============================
+   UTIL
+============================= */
+function qs(n){
+  return new URLSearchParams(location.search).get(n);
+}
+
+function matchStatus(m){
+  if(m.state===1) return 'LIVE';
+  if(m.state===2) return 'SELESAI';
+  return 'AKAN DATANG';
+}
+
+function matchTime(ts){
+  return new Date(ts).toLocaleString('id-ID',{
+    timeZone:CFG.displaySettings.timezone,
+    day:'numeric',month:'long',year:'numeric',
+    hour:'2-digit',minute:'2-digit'
+  });
+}
+
+/* =============================
+   LOAD MATCHES
+============================= */
+async function loadMatches(){
+  const box = document.getElementById('matches');
+  const title = document.getElementById('league-title');
+
+  box.innerHTML = `<div class="loading">${CFG.branding.loadingMessage}</div>`;
+
+  try{
+    const r = await fetch(CFG.apiUrls.matchSchedule);
+    const j = await r.json();
+
+    let list = j.matchList || [];
+    const leagueId = qs('id');
+
+    if(leagueId){
+      list = list.filter(x=>x.leagueId==leagueId);
+    }
+
+    if (leagueId && list.length) {
+  title.textContent = list[0].leagueEn;
+  title.style.display = 'block';
+} else {
+  title.textContent = '';
+  title.style.display = 'none';
+}
+ box.innerHTML = '';
+
+    if(!list.length){
+      box.innerHTML = '<div class="no-matches">Tidak ada pertandingan</div>';
+      return;
+    }
+
+    const type = qs('type');
+
+    list.forEach(m=>{
+      const c = document.createElement('div');
+      c.className='match-card';
+      c.innerHTML = `
+        <div class="match-status">${matchStatus(m)}</div>
+        <div class="match-time">${matchTime(m.matchTime_t)}</div>
+
+        <div class="team-info">
+          <div class="team">
+            <img src="${getLogoUrl(m.homeLogoUrl)}"
+                 onerror="retryWorker(this,'${m.homeLogoUrl}')">
+            <div>${m.homeName}</div>
+          </div>
+
+          <div class="vs">VS</div>
+
+          <div class="team">
+            <img src="${getLogoUrl(m.awayLogoUrl)}"
+                 onerror="retryWorker(this,'${m.awayLogoUrl}')">
+            <div>${m.awayName}</div>
+          </div>
+        </div>
+
+        ${m.state!==0?`<div class="score">${m.homeScore} - ${m.awayScore}</div>`:''}
+
+        <div class="stream-links">
+          <a class="stream-link" href="go:${type||m.matchId}">
+            WATCH NOW 📺
+          </a>
+        </div>
+      `;
+      box.appendChild(c);
+    });
+
+  }catch(e){
+    box.innerHTML = `<div class="error">${CFG.branding.errorMessage}</div>`;
+  }
+}
+
+/* =============================
+   INIT
+============================= */
+(async ()=>{
+  await loadConfig();
+  currentWorker = getRandomWorker();
+  document.title = CFG.branding.siteTitle;
+  document.getElementById('footer').textContent = CFG.branding.footerText;
+  loadMatches();
+})();
+</script>
+</body>
+</html>
