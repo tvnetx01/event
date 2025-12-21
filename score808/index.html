@@ -12,7 +12,14 @@ body{
   color:#fff;min-height:100vh;padding:20px
 }
 .container{max-width:1000px;margin:auto}
-.league-title{text-align:center;font-size:1.6rem;margin:15px 0}
+.league-title{text-align:center;font-size:1.6rem;margin:20px 0}
+.search-box{
+  text-align:center;margin-bottom:15px
+}
+.search-box input{
+  width:80%;max-width:400px;
+  padding:8px;border-radius:20px;border:none
+}
 .match-container{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(350px,1fr));
@@ -47,13 +54,10 @@ body{
 
 <body>
 <div class="container">
-
   <h2 id="league-title" class="league-title"></h2>
 
-  <div id="search-box" style="display:none;text-align:center;margin:15px 0">
-    <input id="searchInput" type="text"
-      placeholder="Cari nama club / liga..."
-      style="width:100%;max-width:400px;padding:10px 15px;border-radius:25px;border:none;outline:none">
+  <div id="searchBox" class="search-box" style="display:none">
+    <input id="searchInput" placeholder="Cari nama club / liga...">
   </div>
 
   <div id="matches" class="match-container"></div>
@@ -62,136 +66,120 @@ body{
 <footer id="footer" style="text-align:center;margin-top:30px;opacity:.8"></footer>
 
 <script>
-let CFG;
-let currentWorker;
+let CFG, currentWorker;
 
-/* ===== LOAD CONFIG ===== */
+/* ================= LOAD CONFIG ================= */
 async function loadConfig(){
   const r = await fetch('https://pisionx.pages.dev/api/tigoals.js');
   CFG = await r.json();
 }
 
-/* ===== WORKER ===== */
+/* ================= WORKER ================= */
 function getRandomWorker(tried=[]){
   const max = CFG.proxyDomains.maxRange;
   const skip = CFG.proxyDomains.skip || [];
   let w;
-  do{ w=Math.floor(Math.random()*max)+1 }
-  while(skip.includes(w)||tried.includes(w));
+  do{
+    w = Math.floor(Math.random()*max)+1;
+  }while(skip.includes(w)||tried.includes(w));
   return w;
 }
-
-function buildProxy(worker,path){
-  return `${CFG.proxyDomains.prefix}${worker}${CFG.proxyDomains.suffix}${path}`;
+function buildProxy(w,p){
+  return `${CFG.proxyDomains.prefix}${w}${CFG.proxyDomains.suffix}${p}`;
 }
-
 function getLogoUrl(url){
   if(!url) return CFG.logoUrlMapping.replaceBrokenLogo;
-  const p = url.replace(CFG.logoUrlMapping.source,'');
+  const path = url.replace(CFG.logoUrlMapping.source,'');
   return buildProxy(
     currentWorker,
-    `/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/${p}`
+    `/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/${path}`
   );
 }
-
-function retryWorker(img,url,tried=[]){
+function retryWorker(img, original, tried=[]){
   tried.push(currentWorker);
   if(tried.length>=CFG.proxyDomains.maxRange){
-    img.src=CFG.logoUrlMapping.replaceBrokenLogo;
-    return;
+    img.src=CFG.logoUrlMapping.replaceBrokenLogo;return;
   }
   currentWorker=getRandomWorker(tried);
-  img.onerror=()=>retryWorker(img,url,tried);
-  img.src=getLogoUrl(url);
+  img.onerror=()=>retryWorker(img,original,tried);
+  img.src=getLogoUrl(original);
 }
 
-/* ===== UTIL ===== */
-const qs = n => new URLSearchParams(location.search).get(n);
+/* ================= UTIL ================= */
+const qs=n=>new URLSearchParams(location.search).get(n);
+const matchStatus=m=>m.state===1?'LIVE':m.state===2?'SELESAI':'AKAN DATANG';
+const matchTime=ts=>new Date(ts).toLocaleString('id-ID',{
+  timeZone:CFG.displaySettings.timezone,
+  day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'
+});
 
-function matchStatus(m){
-  if(m.state===1) return 'LIVE';
-  if(m.state===2) return 'SELESAI';
-  return 'AKAN DATANG';
-}
-
-function matchTime(t){
-  return new Date(t).toLocaleString('id-ID',{
-    timeZone:CFG.displaySettings.timezone,
-    day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'
-  });
-}
-
-/* ===== LOAD MATCHES ===== */
+/* ================= LOAD MATCH ================= */
 async function loadMatches(){
   const box=document.getElementById('matches');
   const title=document.getElementById('league-title');
-  const searchBox=document.getElementById('search-box');
-  const input=document.getElementById('searchInput');
+  const searchBox=document.getElementById('searchBox');
 
   box.innerHTML=`<div class="loading">${CFG.branding.loadingMessage}</div>`;
 
   try{
     const r=await fetch(CFG.apiUrls.matchSchedule);
-    const j=await r.json();
+    let list=(await r.json()).matchList||[];
 
-    let list=j.matchList||[];
-
-    const leagueId = qs('id');
-    const typeParam = qs('type');
-    const goParam = qs('go');
-
-    const noParam = !leagueId && !typeParam && !goParam;
-
-    /* ===== FILTER ===== */
-    if(noParam){
-      list = list.filter(m => m.matchType === 2);
-      title.style.display='none';
-      searchBox.style.display='block';
-    }
+    const leagueId=qs('id');
+    const typeParam=qs('type');
+    const goParam=qs('go');
 
     if(leagueId){
-      list=list.filter(m=>m.leagueId==leagueId);
+      list=list.filter(x=>x.leagueId==leagueId);
       title.textContent=list[0]?.leagueEn||'';
-      title.style.display='block';
-      searchBox.style.display='none';
+    }else{
+      title.textContent='';
+      searchBox.style.display='block';
     }
 
     if(typeParam && !isNaN(typeParam)){
       list=list.filter(m=>m.matchType==Number(typeParam));
     }
 
-    function render(data){
+    document.getElementById('searchInput').oninput=e=>{
+      const q=e.target.value.toLowerCase();
+      render(list.filter(m=>
+        m.homeName.toLowerCase().includes(q)||
+        m.awayName.toLowerCase().includes(q)||
+        m.leagueEn.toLowerCase().includes(q)
+      ));
+    };
+
+    function render(arr){
       box.innerHTML='';
-      if(!data.length){
-        box.innerHTML='<div class="no-matches">Tidak ada hasil</div>';
-        return;
+      if(!arr.length){
+        box.innerHTML='<div class="no-matches">Tidak ada pertandingan</div>';return;
       }
 
-      data.forEach((m,i)=>{
-        let streamTarget;
-
+      arr.forEach((m,i)=>{
+        let stream;
         if(leagueId && goParam){
-          streamTarget = `${goParam}${i+1}`;
+          stream=`${goParam}${i+1}`;
         }else if(goParam){
-          streamTarget = goParam;
+          stream=goParam;
         }else if(typeParam && isNaN(typeParam)){
-          streamTarget = typeParam;
-        }else if(noParam){
-          streamTarget = `nba${i+1}`;
+          stream=typeParam;
         }else{
-          streamTarget = m.matchId;
+          if(m.matchType===2) stream=`nba${i+1}`;
+          else if(m.matchType===1) stream=`s808${i+1}`;
+          else stream=`${m.matchType}${i+1}`;
         }
 
         const c=document.createElement('div');
         c.className='match-card';
         c.innerHTML=`
-          <div class="match-status">${matchStatus(m)}</div>
+          <div class="match-status ${m.state===1?'live':''}">${matchStatus(m)}</div>
           <div class="match-time">${matchTime(m.matchTime_t)}</div>
 
           <div class="team-info">
             <div class="team">
               <img src="${getLogoUrl(m.homeLogoUrl)}"
-                   onerror="retryWorker(this,'${m.homeLogoUrl}')">
+                onerror="retryWorker(this,'${m.homeLogoUrl}')">
               <div>${m.homeName}</div>
             </div>
 
@@ -199,7 +187,7 @@ async function loadMatches(){
 
             <div class="team">
               <img src="${getLogoUrl(m.awayLogoUrl)}"
-                   onerror="retryWorker(this,'${m.awayLogoUrl}')">
+                onerror="retryWorker(this,'${m.awayLogoUrl}')">
               <div>${m.awayName}</div>
             </div>
           </div>
@@ -207,9 +195,7 @@ async function loadMatches(){
           ${m.state!==0?`<div class="score">${m.homeScore} - ${m.awayScore}</div>`:''}
 
           <div class="stream-links">
-            <a class="stream-link" href="go:${streamTarget}">
-              WATCH NOW 📺
-            </a>
+            <a class="stream-link" href="go:${stream}">WATCH NOW 📺</a>
           </div>
         `;
         box.appendChild(c);
@@ -218,23 +204,12 @@ async function loadMatches(){
 
     render(list);
 
-    if(searchBox.style.display==='block'){
-      input.oninput=()=>{
-        const k=input.value.toLowerCase();
-        render(list.filter(m =>
-          (m.homeName||'').toLowerCase().includes(k) ||
-          (m.awayName||'').toLowerCase().includes(k) ||
-          (m.leagueEn||'').toLowerCase().includes(k)
-        ));
-      };
-    }
-
-  }catch(e){
+  }catch{
     box.innerHTML=`<div class="error">${CFG.branding.errorMessage}</div>`;
   }
 }
 
-/* ===== INIT ===== */
+/* ================= INIT ================= */
 (async()=>{
   await loadConfig();
   currentWorker=getRandomWorker();
