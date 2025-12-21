@@ -12,7 +12,7 @@ body{
   color:#fff;min-height:100vh;padding:20px
 }
 .container{max-width:1000px;margin:auto}
-.league-title{text-align:center;font-size:1.6rem;margin:20px 0}
+.league-title{text-align:center;font-size:1.6rem;margin:15px 0}
 .match-container{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(350px,1fr));
@@ -47,16 +47,21 @@ body{
 
 <body>
 <div class="container">
-  <h2 id="league-title" class="league-title">Loading...</h2>
+
+  <h2 id="league-title" class="league-title"></h2>
+
+  <div id="search-box" style="display:none;text-align:center;margin:15px 0">
+    <input id="searchInput" type="text"
+      placeholder="Cari nama club / liga..."
+      style="width:100%;max-width:400px;padding:10px 15px;border-radius:25px;border:none;outline:none">
+  </div>
+
   <div id="matches" class="match-container"></div>
 </div>
 
 <footer id="footer" style="text-align:center;margin-top:30px;opacity:.8"></footer>
 
 <script>
-/* =============================
-   LOAD CONFIG JSON
-============================= */
 let CFG;
 let currentWorker;
 
@@ -65,47 +70,37 @@ async function loadConfig(){
   CFG = await r.json();
 }
 
-/* =============================
-   WORKER & LOGO
-============================= */
 function getRandomWorker(tried=[]){
   const max = CFG.proxyDomains.maxRange;
   const skip = CFG.proxyDomains.skip || [];
   let w;
-  do{
-    w = Math.floor(Math.random()*max)+1;
-  }while(skip.includes(w) || tried.includes(w));
+  do{ w=Math.floor(Math.random()*max)+1 }
+  while(skip.includes(w)||tried.includes(w));
   return w;
 }
 
-function buildProxy(worker, path){
+function buildProxy(worker,path){
   return `${CFG.proxyDomains.prefix}${worker}${CFG.proxyDomains.suffix}${path}`;
 }
 
 function getLogoUrl(url){
   if(!url) return CFG.logoUrlMapping.replaceBrokenLogo;
-  const path = url.replace(CFG.logoUrlMapping.source, '');
-  return buildProxy(currentWorker, `/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/${path}`);
+  const p = url.replace(CFG.logoUrlMapping.source,'');
+  return buildProxy(currentWorker,
+    `/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/${p}`);
 }
 
-function retryWorker(img, originalUrl, tried=[]){
+function retryWorker(img,url,tried=[]){
   tried.push(currentWorker);
-  if(tried.length >= CFG.proxyDomains.maxRange){
-    img.onerror=null;
-    img.src = CFG.logoUrlMapping.replaceBrokenLogo;
-    return;
+  if(tried.length>=CFG.proxyDomains.maxRange){
+    img.src=CFG.logoUrlMapping.replaceBrokenLogo;return;
   }
-  currentWorker = getRandomWorker(tried);
-  img.onerror = ()=>retryWorker(img, originalUrl, tried);
-  img.src = getLogoUrl(originalUrl);
+  currentWorker=getRandomWorker(tried);
+  img.onerror=()=>retryWorker(img,url,tried);
+  img.src=getLogoUrl(url);
 }
 
-/* =============================
-   UTIL
-============================= */
-function qs(n){
-  return new URLSearchParams(location.search).get(n);
-}
+const qs = n => new URLSearchParams(location.search).get(n);
 
 function matchStatus(m){
   if(m.state===1) return 'LIVE';
@@ -113,54 +108,58 @@ function matchStatus(m){
   return 'AKAN DATANG';
 }
 
-function matchTime(ts){
-  return new Date(ts).toLocaleString('id-ID',{
+function matchTime(t){
+  return new Date(t).toLocaleString('id-ID',{
     timeZone:CFG.displaySettings.timezone,
-    day:'numeric',month:'long',year:'numeric',
-    hour:'2-digit',minute:'2-digit'
+    day:'numeric',month:'long',hour:'2-digit',minute:'2-digit'
   });
 }
 
-/* =============================
-   LOAD MATCHES
-============================= */
 async function loadMatches(){
-  const box = document.getElementById('matches');
-  const title = document.getElementById('league-title');
+  const box=document.getElementById('matches');
+  const title=document.getElementById('league-title');
+  const searchBox=document.getElementById('search-box');
+  const input=document.getElementById('searchInput');
 
-  box.innerHTML = `<div class="loading">${CFG.branding.loadingMessage}</div>`;
+  box.innerHTML=`<div class="loading">${CFG.branding.loadingMessage}</div>`;
 
-  try{
-    const r = await fetch(CFG.apiUrls.matchSchedule);
-    const j = await r.json();
+  const r=await fetch(CFG.apiUrls.matchSchedule);
+  const j=await r.json();
 
-    let list = j.matchList || [];
-    const leagueId = qs('id');
+  let list=j.matchList||[];
 
-    if(leagueId){
-      list = list.filter(x=>x.leagueId==leagueId);
-    }
+  const leagueId=qs('id');
+  const type=qs('type');
+  const goParam=qs('go');
 
-    if (leagueId && list.length) {
-  title.textContent = list[0].leagueEn;
-  title.style.display = 'block';
-} else {
-  title.textContent = '';
-  title.style.display = 'none';
-}
- box.innerHTML = '';
+  if(leagueId){
+    list=list.filter(x=>x.leagueId==leagueId);
+    title.textContent=list[0]?.leagueEn||'';
+    title.style.display='block';
+    searchBox.style.display='none';
+  }else{
+    title.style.display='none';
+    searchBox.style.display='block';
+  }
 
-    if(!list.length){
-      box.innerHTML = '<div class="no-matches">Tidak ada pertandingan</div>';
-      return;
-    }
+  function render(data){
+    box.innerHTML='';
+    data.forEach((m,i)=>{
+      let streamTarget;
 
-    const type = qs('type');
+      if(leagueId && goParam){
+        streamTarget = `${goParam}${i+1}`;   // 🔥 AUTO NUMBER
+      }else if(goParam){
+        streamTarget = goParam;
+      }else if(type){
+        streamTarget = type;
+      }else{
+        streamTarget = m.matchId;
+      }
 
-    list.forEach(m=>{
-      const c = document.createElement('div');
+      const c=document.createElement('div');
       c.className='match-card';
-      c.innerHTML = `
+      c.innerHTML=`
         <div class="match-status">${matchStatus(m)}</div>
         <div class="match-time">${matchTime(m.matchTime_t)}</div>
 
@@ -183,27 +182,30 @@ async function loadMatches(){
         ${m.state!==0?`<div class="score">${m.homeScore} - ${m.awayScore}</div>`:''}
 
         <div class="stream-links">
-          <a class="stream-link" href="go:${type||m.matchId}">
+          <a class="stream-link" href="go:${streamTarget}">
             WATCH NOW 📺
           </a>
-        </div>
-      `;
+        </div>`;
       box.appendChild(c);
     });
+  }
 
-  }catch(e){
-    box.innerHTML = `<div class="error">${CFG.branding.errorMessage}</div>`;
+  render(list);
+
+  if(!leagueId){
+    input.oninput=()=>render(list.filter(m=>
+      (m.homeName||'').toLowerCase().includes(input.value.toLowerCase()) ||
+      (m.awayName||'').toLowerCase().includes(input.value.toLowerCase()) ||
+      (m.leagueEn||'').toLowerCase().includes(input.value.toLowerCase())
+    ));
   }
 }
 
-/* =============================
-   INIT
-============================= */
-(async ()=>{
+(async()=>{
   await loadConfig();
-  currentWorker = getRandomWorker();
-  document.title = CFG.branding.siteTitle;
-  document.getElementById('footer').textContent = CFG.branding.footerText;
+  currentWorker=getRandomWorker();
+  document.title=CFG.branding.siteTitle;
+  document.getElementById('footer').textContent=CFG.branding.footerText;
   loadMatches();
 })();
 </script>
