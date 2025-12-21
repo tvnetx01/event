@@ -65,11 +65,13 @@ body{
 let CFG;
 let currentWorker;
 
+/* ===== LOAD CONFIG ===== */
 async function loadConfig(){
   const r = await fetch('https://pisionx.pages.dev/api/tigoals.js');
   CFG = await r.json();
 }
 
+/* ===== WORKER ===== */
 function getRandomWorker(tried=[]){
   const max = CFG.proxyDomains.maxRange;
   const skip = CFG.proxyDomains.skip || [];
@@ -86,20 +88,24 @@ function buildProxy(worker,path){
 function getLogoUrl(url){
   if(!url) return CFG.logoUrlMapping.replaceBrokenLogo;
   const p = url.replace(CFG.logoUrlMapping.source,'');
-  return buildProxy(currentWorker,
-    `/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/${p}`);
+  return buildProxy(
+    currentWorker,
+    `/https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/${p}`
+  );
 }
 
 function retryWorker(img,url,tried=[]){
   tried.push(currentWorker);
   if(tried.length>=CFG.proxyDomains.maxRange){
-    img.src=CFG.logoUrlMapping.replaceBrokenLogo;return;
+    img.src=CFG.logoUrlMapping.replaceBrokenLogo;
+    return;
   }
   currentWorker=getRandomWorker(tried);
   img.onerror=()=>retryWorker(img,url,tried);
   img.src=getLogoUrl(url);
 }
 
+/* ===== UTIL ===== */
 const qs = n => new URLSearchParams(location.search).get(n);
 
 function matchStatus(m){
@@ -115,6 +121,7 @@ function matchTime(t){
   });
 }
 
+/* ===== LOAD MATCHES ===== */
 async function loadMatches(){
   const box=document.getElementById('matches');
   const title=document.getElementById('league-title');
@@ -123,84 +130,111 @@ async function loadMatches(){
 
   box.innerHTML=`<div class="loading">${CFG.branding.loadingMessage}</div>`;
 
-  const r=await fetch(CFG.apiUrls.matchSchedule);
-  const j=await r.json();
+  try{
+    const r=await fetch(CFG.apiUrls.matchSchedule);
+    const j=await r.json();
 
-  let list=j.matchList||[];
+    let list=j.matchList||[];
 
-  const leagueId=qs('id');
-  const type=qs('type');
-  const goParam=qs('go');
+    const leagueId = qs('id');
+    const typeParam = qs('type');
+    const goParam = qs('go');
 
-  if(leagueId){
-    list=list.filter(x=>x.leagueId==leagueId);
-    title.textContent=list[0]?.leagueEn||'';
-    title.style.display='block';
-    searchBox.style.display='none';
-  }else{
-    title.style.display='none';
-    searchBox.style.display='block';
-  }
+    const noParam = !leagueId && !typeParam && !goParam;
 
-  function render(data){
-    box.innerHTML='';
-    data.forEach((m,i)=>{
-      let streamTarget;
+    /* ===== FILTER ===== */
+    if(noParam){
+      list = list.filter(m => m.matchType === 2);
+      title.style.display='none';
+      searchBox.style.display='block';
+    }
 
-      if(leagueId && goParam){
-        streamTarget = `${goParam}${i+1}`;   // 🔥 AUTO NUMBER
-      }else if(goParam){
-        streamTarget = goParam;
-      }else if(type){
-        streamTarget = type;
-      }else{
-        streamTarget = m.matchId;
+    if(leagueId){
+      list=list.filter(m=>m.leagueId==leagueId);
+      title.textContent=list[0]?.leagueEn||'';
+      title.style.display='block';
+      searchBox.style.display='none';
+    }
+
+    if(typeParam && !isNaN(typeParam)){
+      list=list.filter(m=>m.matchType==Number(typeParam));
+    }
+
+    function render(data){
+      box.innerHTML='';
+      if(!data.length){
+        box.innerHTML='<div class="no-matches">Tidak ada hasil</div>';
+        return;
       }
 
-      const c=document.createElement('div');
-      c.className='match-card';
-      c.innerHTML=`
-        <div class="match-status">${matchStatus(m)}</div>
-        <div class="match-time">${matchTime(m.matchTime_t)}</div>
+      data.forEach((m,i)=>{
+        let streamTarget;
 
-        <div class="team-info">
-          <div class="team">
-            <img src="${getLogoUrl(m.homeLogoUrl)}"
-                 onerror="retryWorker(this,'${m.homeLogoUrl}')">
-            <div>${m.homeName}</div>
+        if(leagueId && goParam){
+          streamTarget = `${goParam}${i+1}`;
+        }else if(goParam){
+          streamTarget = goParam;
+        }else if(typeParam && isNaN(typeParam)){
+          streamTarget = typeParam;
+        }else if(noParam){
+          streamTarget = `nba${i+1}`;
+        }else{
+          streamTarget = m.matchId;
+        }
+
+        const c=document.createElement('div');
+        c.className='match-card';
+        c.innerHTML=`
+          <div class="match-status">${matchStatus(m)}</div>
+          <div class="match-time">${matchTime(m.matchTime_t)}</div>
+
+          <div class="team-info">
+            <div class="team">
+              <img src="${getLogoUrl(m.homeLogoUrl)}"
+                   onerror="retryWorker(this,'${m.homeLogoUrl}')">
+              <div>${m.homeName}</div>
+            </div>
+
+            <div class="vs">VS</div>
+
+            <div class="team">
+              <img src="${getLogoUrl(m.awayLogoUrl)}"
+                   onerror="retryWorker(this,'${m.awayLogoUrl}')">
+              <div>${m.awayName}</div>
+            </div>
           </div>
 
-          <div class="vs">VS</div>
+          ${m.state!==0?`<div class="score">${m.homeScore} - ${m.awayScore}</div>`:''}
 
-          <div class="team">
-            <img src="${getLogoUrl(m.awayLogoUrl)}"
-                 onerror="retryWorker(this,'${m.awayLogoUrl}')">
-            <div>${m.awayName}</div>
+          <div class="stream-links">
+            <a class="stream-link" href="go:${streamTarget}">
+              WATCH NOW 📺
+            </a>
           </div>
-        </div>
+        `;
+        box.appendChild(c);
+      });
+    }
 
-        ${m.state!==0?`<div class="score">${m.homeScore} - ${m.awayScore}</div>`:''}
+    render(list);
 
-        <div class="stream-links">
-          <a class="stream-link" href="go:${streamTarget}">
-            WATCH NOW 📺
-          </a>
-        </div>`;
-      box.appendChild(c);
-    });
-  }
+    if(searchBox.style.display==='block'){
+      input.oninput=()=>{
+        const k=input.value.toLowerCase();
+        render(list.filter(m =>
+          (m.homeName||'').toLowerCase().includes(k) ||
+          (m.awayName||'').toLowerCase().includes(k) ||
+          (m.leagueEn||'').toLowerCase().includes(k)
+        ));
+      };
+    }
 
-  render(list);
-
-  if(!leagueId){
-    input.oninput=()=>render(list.filter(m=>
-      (m.homeName||'').toLowerCase().includes(input.value.toLowerCase()) ||
-      (m.awayName||'').toLowerCase().includes(input.value.toLowerCase()) ||
-      (m.leagueEn||'').toLowerCase().includes(input.value.toLowerCase())
-    ));
+  }catch(e){
+    box.innerHTML=`<div class="error">${CFG.branding.errorMessage}</div>`;
   }
 }
 
+/* ===== INIT ===== */
 (async()=>{
   await loadConfig();
   currentWorker=getRandomWorker();
