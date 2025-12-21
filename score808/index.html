@@ -9,7 +9,7 @@
 /* ===== RESET ===== */
 *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,Tahoma}
 
-/* ===== BODY & BACKGROUND (FULL MULUS) ===== */
+/* ===== BODY & BACKGROUND MULUS ===== */
 html,body{
   min-height:100%;
 }
@@ -22,22 +22,17 @@ body{
 
 /* ===== CONTAINER ===== */
 .container{max-width:1100px;margin:auto}
-
-/* ===== TITLE ===== */
 .league-title{text-align:center;font-size:1.6rem;margin:15px 0}
 
 /* ===== SEARCH ===== */
 .search-box{text-align:center;margin-bottom:12px}
 .search-box input{
   max-width:420px;width:100%;
-  padding:10px 14px;border-radius:25px;border:none;
-  outline:none
+  padding:10px;border-radius:25px;border:none
 }
 
 /* ===== FILTER ===== */
-.filters{
-  display:flex;gap:10px;justify-content:center;margin-bottom:15px
-}
+.filters{display:flex;gap:10px;justify-content:center;margin-bottom:15px}
 .filters button{
   padding:7px 16px;border:none;border-radius:20px;
   background:rgba(255,255,255,.2);
@@ -45,70 +40,89 @@ body{
 }
 .filters button.active{background:#ff9800}
 
-/* ===== MATCH GRID ===== */
+/* ===== MATCH CARD ===== */
 .match-container{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(350px,1fr));
   gap:12px
 }
-
-/* ===== MATCH CARD ===== */
 .match-card{
   background:rgba(255,255,255,.12);
   border-radius:12px;
   padding:16px;
   backdrop-filter:blur(6px)
 }
-
 .match-time{text-align:center;color:#ffcc00;font-weight:bold}
-
-.team-info{
-  display:flex;justify-content:space-between;align-items:center;margin:10px 0
-}
+.team-info{display:flex;justify-content:space-between;align-items:center;margin:10px 0}
 .team{text-align:center;width:40%}
 .team img{
   width:60px;height:60px;
   background:#fff;border-radius:50%;
-  padding:5px;object-fit:contain
+  padding:5px
 }
 .vs{font-weight:bold;color:#ffcc00}
-
 .score{text-align:center;color:#ffcc00;font-size:1.4rem}
 
-/* ===== STREAM ===== */
+/* ===== STREAM BUTTON ===== */
 .stream-links{text-align:center;margin-top:10px}
 .stream-link{
+  display:inline-block;
   background:linear-gradient(to right,#ff5722,#ff9800);
-  padding:8px 20px;border-radius:25px;
-  color:#fff;text-decoration:none;font-weight:bold;
-  display:inline-block
+  padding:8px 18px;border-radius:25px;
+  color:#fff;text-decoration:none;font-weight:bold
 }
 
-/* ===== STATE ===== */
-.no-matches{text-align:center;padding:30px}
-
-/* ===== HIDE ELEMENT ===== */
+/* ===== STATES ===== */
+.loading,.error,.no-matches{text-align:center;padding:30px}
 .hidden{display:none}
 
-/* ===== 🔥 PENTING: HIDE SEARCH & FILTER SEJAK AWAL ===== */
-body.param-hide #searchBox,
-body.param-hide #filterBox{
-  display:none !important;
+/* ===== LOADING SCREEN ===== */
+.loading-screen{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:opacity .5s ease,visibility .5s ease;
 }
+.loading-screen.hide{
+  opacity:0;
+  visibility:hidden;
+}
+.loader{text-align:center}
+.spinner{
+  width:70px;height:70px;
+  border:6px solid rgba(255,255,255,.3);
+  border-top:6px solid #fff;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  margin:auto
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{margin-top:15px;font-weight:bold}
 </style>
 </head>
 
-<body class="param-hide">
+<body>
+
+<!-- ===== LOADING ===== -->
+<div id="loadingScreen" class="loading-screen">
+  <div class="loader">
+    <div class="spinner"></div>
+    <div class="loading-text">Sabar... lagi loading ⚽🏀</div>
+  </div>
+</div>
+
 <div class="container">
   <h2 id="league-title" class="league-title"></h2>
 
-  <!-- SEARCH -->
-  <div id="searchBox" class="search-box">
+  <div id="searchBox" class="search-box hidden">
     <input id="search" placeholder="Cari tim atau liga...">
   </div>
 
-  <!-- FILTER -->
-  <div id="filterBox" class="filters">
+  <div id="filterBox" class="filters hidden">
     <button data-type="all" class="active">ALL</button>
     <button data-type="1">FOOTBALL</button>
     <button data-type="2">NBA</button>
@@ -122,21 +136,15 @@ body.param-hide #filterBox{
 <script>
 let CFG, allMatches=[], activeFilter='all', currentWorker;
 
+/* ===== UTIL ===== */
+const qs=n=>new URLSearchParams(location.search).get(n);
+const hasParam=()=>location.search.length>1;
+
 /* ===== CONFIG ===== */
 async function loadConfig(){
   const r=await fetch('https://pisionx.pages.dev/api/tigoals.js');
   CFG=await r.json();
 }
-
-/* ===== UTIL ===== */
-const qs=n=>new URLSearchParams(location.search).get(n);
-const hasParam=()=>location.search.length>1;
-
-const time=t=>new Date(t).toLocaleString('id-ID',{
-  timeZone:CFG.displaySettings.timezone,
-  hour:'2-digit',minute:'2-digit'
-});
-const status=m=>m.state===1?'LIVE':m.state===2?'ENDED':'COOMNG UP';
 
 /* ===== WORKER ===== */
 function randomWorker(tried=[]){
@@ -163,15 +171,12 @@ function logoUrl(url){
     const p=url.replace(CFG.logoUrlMapping.nbaSource,'').replace(/\.png$/i,'.jpg');
     return proxyUrl(currentWorker,`/${CFG.logoUrlMapping.nbaCdn}${p}`);
   }
-
   return CFG.logoUrlMapping.fallback;
 }
-
 function retry(img,original,tried=[]){
   tried.push(currentWorker);
   if(tried.length>=CFG.proxyDomains.maxRange){
-    img.src=CFG.logoUrlMapping.fallback;
-    return;
+    img.src=CFG.logoUrlMapping.fallback;return;
   }
   currentWorker=randomWorker(tried);
   img.onerror=()=>retry(img,original,tried);
@@ -192,8 +197,8 @@ function render(){
     }
     if(q){
       list=list.filter(m=>
-        m.homeName.toLowerCase().includes(q) ||
-        m.awayName.toLowerCase().includes(q) ||
+        m.homeName.toLowerCase().includes(q)||
+        m.awayName.toLowerCase().includes(q)||
         (m.leagueEn||'').toLowerCase().includes(q)
       );
     }
@@ -204,13 +209,13 @@ function render(){
     return;
   }
 
-  const counter={}, go=qs('go');
+  const counter={},go=qs('go');
 
   list.forEach(m=>{
     counter[m.matchType]=(counter[m.matchType]||0)+1;
     const i=counter[m.matchType];
-
     let stream;
+
     if(go) stream=`${go}${i}`;
     else if(m.matchType==2) stream=`nba${i}`;
     else if(m.matchType==1) stream=`s808${i}`;
@@ -219,9 +224,8 @@ function render(){
     const c=document.createElement('div');
     c.className='match-card';
     c.innerHTML=`
-      <div>${status(m)}</div>
-      <div class="match-time">${time(m.matchTime_t)}</div>
-
+      <div>${m.state===1?'LIVE':m.state===2?'ENDED':'COOMING UP'}</div>
+      <div class="match-time">${new Date(m.matchTime_t).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</div>
       <div class="team-info">
         <div class="team">
           <img src="${logoUrl(m.homeLogoUrl)}" onerror="retry(this,'${m.homeLogoUrl}')">
@@ -233,13 +237,9 @@ function render(){
           <div>${m.awayName}</div>
         </div>
       </div>
-
-      ${m.state!==0?`<div class="score">${m.homeScore}-${m.awayScore}</div>`:''}
-
       <div class="stream-links">
         <a class="stream-link" href="go:${stream}">WATCH NOW 📺</a>
-      </div>
-    `;
+      </div>`;
     box.appendChild(c);
   });
 }
@@ -255,27 +255,16 @@ function render(){
   const r=await fetch(CFG.apiUrls.matchSchedule);
   let list=(await r.json()).matchList||[];
 
-  const id=qs('id');
-  const type=qs('type');
-
-  if(id){
-    list=list.filter(x=>x.leagueId==id);
-    document.getElementById('league-title').textContent=list[0]?.leagueEn||'';
-  }
-
-  if(type){
-    list=list.filter(x=>x.matchType==type);
-  }
-
-  if(!id && !type){
-    list=list.filter(x=>x.matchType==1||x.matchType==2);
-  }
+  const id=qs('id'),type=qs('type');
+  if(id) list=list.filter(x=>x.leagueId==id);
+  if(type) list=list.filter(x=>x.matchType==type);
+  if(!id&&!type) list=list.filter(x=>x.matchType==1||x.matchType==2);
 
   allMatches=list;
 
-  /* 🔥 BUKA SEARCH & FILTER HANYA JIKA TANPA PARAM */
   if(!hasParam()){
-    document.body.classList.remove('param-hide');
+    document.getElementById('searchBox').classList.remove('hidden');
+    document.getElementById('filterBox').classList.remove('hidden');
   }
 
   render();
@@ -289,6 +278,8 @@ function render(){
       render();
     };
   });
+
+  setTimeout(()=>document.getElementById('loadingScreen').classList.add('hide'),300);
 })();
 </script>
 </body>
