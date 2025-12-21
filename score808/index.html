@@ -136,7 +136,7 @@ const time=t=>new Date(t).toLocaleString('id-ID',{
   timeZone:CFG.displaySettings.timezone,
   hour:'2-digit',minute:'2-digit'
 });
-const status=m=>m.state===1?'LIVE':m.state===2?'SELESAI':'AKAN DATANG';
+const status=m=>m.state===1?'LIVE':m.state===2?'ENDED':'COOMNG UP';
 
 /* ===== WORKER ===== */
 function randomWorker(tried=[]){
