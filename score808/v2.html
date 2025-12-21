@@ -6,45 +6,123 @@
 <title>Netxtv</title>
 
 <style>
+/* ===== RESET ===== */
 *{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,Tahoma}
-body{background:linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);color:#fff;padding:20px}
+
+/* ===== BODY & BACKGROUND MULUS ===== */
+html,body{
+  min-height:100%;
+}
+body{
+  background:linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);
+  background-attachment:fixed;
+  color:#fff;
+  padding:20px;
+}
+
+/* ===== CONTAINER ===== */
 .container{max-width:1100px;margin:auto}
 .league-title{text-align:center;font-size:1.6rem;margin:15px 0}
 
+/* ===== SEARCH ===== */
 .search-box{text-align:center;margin-bottom:12px}
-.search-box input{max-width:420px;width:100%;padding:10px;border-radius:25px;border:none}
+.search-box input{
+  max-width:420px;width:100%;
+  padding:10px;border-radius:25px;border:none
+}
 
+/* ===== FILTER ===== */
 .filters{display:flex;gap:10px;justify-content:center;margin-bottom:15px}
 .filters button{
   padding:7px 16px;border:none;border-radius:20px;
-  background:rgba(255,255,255,.2);color:#fff;font-weight:bold;cursor:pointer
+  background:rgba(255,255,255,.2);
+  color:#fff;font-weight:bold;cursor:pointer
 }
 .filters button.active{background:#ff9800}
 
-.match-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(350px,1fr));gap:12px}
-.match-card{background:rgba(255,255,255,.12);border-radius:10px;padding:16px}
+/* ===== MATCH CARD ===== */
+.match-container{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(350px,1fr));
+  gap:12px
+}
+.match-card{
+  background:rgba(255,255,255,.12);
+  border-radius:12px;
+  padding:16px;
+  backdrop-filter:blur(6px)
+}
 .match-time{text-align:center;color:#ffcc00;font-weight:bold}
 .team-info{display:flex;justify-content:space-between;align-items:center;margin:10px 0}
 .team{text-align:center;width:40%}
-.team img{width:60px;height:60px;background:#fff;border-radius:50%;padding:5px}
+.team img{
+  width:60px;height:60px;
+  background:#fff;border-radius:50%;
+  padding:5px
+}
 .vs{font-weight:bold;color:#ffcc00}
 .score{text-align:center;color:#ffcc00;font-size:1.4rem}
+
+/* ===== STREAM BUTTON ===== */
 .stream-links{text-align:center;margin-top:10px}
-.stream-link{background:linear-gradient(to right,#ff5722,#ff9800);padding:8px 18px;border-radius:25px;color:#fff;text-decoration:none;font-weight:bold}
+.stream-link{
+  display:inline-block;
+  background:linear-gradient(to right,#ff5722,#ff9800);
+  padding:8px 18px;border-radius:25px;
+  color:#fff;text-decoration:none;font-weight:bold
+}
+
+/* ===== STATES ===== */
 .loading,.error,.no-matches{text-align:center;padding:30px}
 .hidden{display:none}
+
+/* ===== LOADING SCREEN ===== */
+.loading-screen{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+  background:linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transition:opacity .5s ease,visibility .5s ease;
+}
+.loading-screen.hide{
+  opacity:0;
+  visibility:hidden;
+}
+.loader{text-align:center}
+.spinner{
+  width:70px;height:70px;
+  border:6px solid rgba(255,255,255,.3);
+  border-top:6px solid #fff;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  margin:auto
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{margin-top:15px;font-weight:bold}
 </style>
 </head>
 
 <body>
+
+<!-- ===== LOADING ===== -->
+<div id="loadingScreen" class="loading-screen">
+  <div class="loader">
+    <div class="spinner"></div>
+    <div class="loading-text">Sabar... lagi loading ⚽🏀</div>
+  </div>
+</div>
+
 <div class="container">
   <h2 id="league-title" class="league-title"></h2>
 
-  <div id="searchBox" class="search-box">
+  <div id="searchBox" class="search-box hidden">
     <input id="search" placeholder="Cari tim atau liga...">
   </div>
 
-  <div id="filterBox" class="filters">
+  <div id="filterBox" class="filters hidden">
     <button data-type="all" class="active">ALL</button>
     <button data-type="1">FOOTBALL</button>
     <button data-type="2">NBA</button>
@@ -58,23 +136,17 @@ body{background:linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);color:#fff;paddi
 <script>
 let CFG, allMatches=[], activeFilter='all', currentWorker;
 
-/* ========= CONFIG ========= */
+/* ===== UTIL ===== */
+const qs=n=>new URLSearchParams(location.search).get(n);
+const hasParam=()=>location.search.length>1;
+
+/* ===== CONFIG ===== */
 async function loadConfig(){
-  const r = await fetch('https://pisionx.pages.dev/api/tigoals.js');
-  CFG = await r.json();
+  const r=await fetch('https://pisionx.pages.dev/api/tigoals.js');
+  CFG=await r.json();
 }
 
-/* ========= UTIL ========= */
-const qs = n => new URLSearchParams(location.search).get(n);
-const hasParam = () => location.search.length > 1;
-
-const time = t => new Date(t).toLocaleString('id-ID',{
-  timeZone:CFG.displaySettings.timezone,
-  hour:'2-digit',minute:'2-digit'
-});
-const status = m => m.state===1?'LIVE':m.state===2?'SELESAI':'AKAN DATANG';
-
-/* ========= WORKER ========= */
+/* ===== WORKER ===== */
 function randomWorker(tried=[]){
   let w;
   do{
@@ -86,7 +158,7 @@ function proxyUrl(w,path){
   return `${CFG.proxyDomains.prefix}${w}${CFG.proxyDomains.suffix}${path}`;
 }
 
-/* ========= LOGO ========= */
+/* ===== LOGO ===== */
 function logoUrl(url){
   if(!url) return CFG.logoUrlMapping.fallback;
 
@@ -99,22 +171,19 @@ function logoUrl(url){
     const p=url.replace(CFG.logoUrlMapping.nbaSource,'').replace(/\.png$/i,'.jpg');
     return proxyUrl(currentWorker,`/${CFG.logoUrlMapping.nbaCdn}${p}`);
   }
-
   return CFG.logoUrlMapping.fallback;
 }
-
 function retry(img,original,tried=[]){
   tried.push(currentWorker);
   if(tried.length>=CFG.proxyDomains.maxRange){
-    img.src=CFG.logoUrlMapping.fallback;
-    return;
+    img.src=CFG.logoUrlMapping.fallback;return;
   }
   currentWorker=randomWorker(tried);
   img.onerror=()=>retry(img,original,tried);
   img.src=logoUrl(original);
 }
 
-/* ========= RENDER ========= */
+/* ===== RENDER ===== */
 function render(){
   const box=document.getElementById('matches');
   const q=document.getElementById('search').value.toLowerCase();
@@ -128,8 +197,8 @@ function render(){
     }
     if(q){
       list=list.filter(m=>
-        m.homeName.toLowerCase().includes(q) ||
-        m.awayName.toLowerCase().includes(q) ||
+        m.homeName.toLowerCase().includes(q)||
+        m.awayName.toLowerCase().includes(q)||
         (m.leagueEn||'').toLowerCase().includes(q)
       );
     }
@@ -140,14 +209,13 @@ function render(){
     return;
   }
 
-  const counter={};
-  const go=qs('go');
+  const counter={},go=qs('go');
 
   list.forEach(m=>{
     counter[m.matchType]=(counter[m.matchType]||0)+1;
     const i=counter[m.matchType];
-
     let stream;
+
     if(go) stream=`${go}${i}`;
     else if(m.matchType==2) stream=`nba${i}`;
     else if(m.matchType==1) stream=`s808${i}`;
@@ -156,9 +224,8 @@ function render(){
     const c=document.createElement('div');
     c.className='match-card';
     c.innerHTML=`
-      <div>${status(m)}</div>
-      <div class="match-time">${time(m.matchTime_t)}</div>
-
+      <div>${m.state===1?'LIVE':m.state===2?'ENDED':'COOMING UP'}</div>
+      <div class="match-time">${new Date(m.matchTime_t).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'})}</div>
       <div class="team-info">
         <div class="team">
           <img src="${logoUrl(m.homeLogoUrl)}" onerror="retry(this,'${m.homeLogoUrl}')">
@@ -170,18 +237,14 @@ function render(){
           <div>${m.awayName}</div>
         </div>
       </div>
-
-      ${m.state!==0?`<div class="score">${m.homeScore}-${m.awayScore}</div>`:''}
-
       <div class="stream-links">
         <a class="stream-link" href="go:${stream}">WATCH NOW 📺</a>
-      </div>
-    `;
+      </div>`;
     box.appendChild(c);
   });
 }
 
-/* ========= INIT ========= */
+/* ===== INIT ===== */
 (async()=>{
   await loadConfig();
   currentWorker=randomWorker();
@@ -192,27 +255,16 @@ function render(){
   const r=await fetch(CFG.apiUrls.matchSchedule);
   let list=(await r.json()).matchList||[];
 
-  const id=qs('id');
-  const type=qs('type');
-
-  if(id){
-    list=list.filter(x=>x.leagueId==id);
-    document.getElementById('league-title').textContent=list[0]?.leagueEn||'';
-  }
-
-  if(type){
-    list=list.filter(x=>x.matchType==type);
-  }
-
-  if(!id && !type){
-    list=list.filter(x=>x.matchType==1||x.matchType==2);
-  }
+  const id=qs('id'),type=qs('type');
+  if(id) list=list.filter(x=>x.leagueId==id);
+  if(type) list=list.filter(x=>x.matchType==type);
+  if(!id&&!type) list=list.filter(x=>x.matchType==1||x.matchType==2);
 
   allMatches=list;
 
-  if(hasParam()){
-    document.getElementById('searchBox').classList.add('hidden');
-    document.getElementById('filterBox').classList.add('hidden');
+  if(!hasParam()){
+    document.getElementById('searchBox').classList.remove('hidden');
+    document.getElementById('filterBox').classList.remove('hidden');
   }
 
   render();
@@ -226,6 +278,8 @@ function render(){
       render();
     };
   });
+
+  setTimeout(()=>document.getElementById('loadingScreen').classList.add('hide'),300);
 })();
 </script>
 </body>
