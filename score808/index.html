@@ -21,7 +21,8 @@ html, body {
 }
 
 body {
-  background: #000000; /* Background hitam full */
+  background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+  background-attachment: fixed;
   color: #fff;
   padding: 15px;
   -webkit-tap-highlight-color: transparent;
@@ -42,7 +43,7 @@ body {
   width: 100%;
   height: 100%;
   z-index: 9999;
-  background: #000000;
+  background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -90,7 +91,6 @@ body {
   line-height: 1.3;
   padding: 0 10px;
   word-break: break-word;
-  color: #ffcc00;
 }
 
 /* ================= SEARCH & FILTER ================= */
@@ -105,17 +105,17 @@ body {
   max-width: 500px;
   padding: 12px 20px;
   border-radius: 30px;
-  border: 2px solid #333;
+  border: none;
   font-size: 16px;
-  background: #222;
-  color: #fff;
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
   transition: all 0.3s;
 }
 
 .search-box input:focus {
   outline: none;
-  border-color: #ff9800;
   box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.3);
+  transform: scale(1.02);
 }
 
 .filters {
@@ -129,9 +129,9 @@ body {
 
 .filters button {
   padding: 10px 20px;
-  border: 2px solid #333;
+  border: none;
   border-radius: 25px;
-  background: #222;
+  background: rgba(255, 255, 255, 0.15);
   color: #fff;
   font-weight: 600;
   cursor: pointer;
@@ -140,16 +140,17 @@ body {
   flex: 1;
   min-width: 100px;
   max-width: 150px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .filters button:hover {
-  background: #333;
-  border-color: #ff9800;
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
 }
 
 .filters button.active {
   background: linear-gradient(135deg, #ff5722, #ff9800);
-  border-color: #ff5722;
   box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
 }
 
@@ -169,10 +170,12 @@ body {
 }
 
 .match-card {
-  background: #111;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 15px;
   padding: 20px;
-  border: 1px solid #333;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: transform 0.3s, box-shadow 0.3s;
   position: relative;
   overflow: hidden;
@@ -180,21 +183,7 @@ body {
 
 .match-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(255, 152, 0, 0.2);
-  border-color: #ff9800;
-}
-
-/* League name */
-.league-name {
-  text-align: center;
-  font-size: clamp(12px, 3vw, 14px);
-  color: #ffcc00;
-  font-weight: 600;
-  margin-bottom: 10px;
-  padding: 5px 10px;
-  background: #222;
-  border-radius: 20px;
-  text-transform: uppercase;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 .match-time {
@@ -204,7 +193,7 @@ body {
   font-size: clamp(14px, 3vw, 16px);
   margin-bottom: 15px;
   padding: 5px;
-  background: #222;
+  background: rgba(0, 0, 0, 0.2);
   border-radius: 20px;
 }
 
@@ -257,17 +246,15 @@ body {
   height: 60px;
   min-width: 50px;
   min-height: 50px;
-  background: #222;
+  background: #fff;
   border-radius: 50%;
   padding: 6px;
   object-fit: contain;
   transition: transform 0.3s;
-  border: 2px solid #333;
 }
 
 .team img:hover {
   transform: scale(1.1);
-  border-color: #ff9800;
 }
 
 .team div {
@@ -277,7 +264,6 @@ body {
   word-break: break-word;
   overflow-wrap: break-word;
   max-width: 100%;
-  color: #fff;
 }
 
 @media (max-width: 480px) {
@@ -335,42 +321,12 @@ body {
   background: linear-gradient(to right, #ff9800, #ff5722);
 }
 
-/* ================= COUNTDOWN ================= */
-.countdown-container {
-  margin-top: 15px;
-}
-
-.countdown {
-  text-align: center;
-  color: #00ff6a;
-  font-weight: bold;
-  font-size: clamp(14px, 3vw, 16px);
-  padding: 12px;
-  background: #222;
-  border-radius: 10px;
-  border: 1px solid #00ff6a;
-  animation: pulse 2s infinite;
-}
-
-.countdown-soon {
-  text-align: center;
-  color: #ff9800;
-  font-weight: bold;
-  font-size: clamp(14px, 3vw, 16px);
-  padding: 12px;
-  background: #222;
-  border-radius: 10px;
-  border: 1px solid #ff9800;
-  animation: pulse 1s infinite;
-}
-
 /* UTILITY CLASSES */
 .loading, .error, .no-matches {
   text-align: center;
   padding: 40px 20px;
   font-size: clamp(16px, 4vw, 18px);
   grid-column: 1 / -1;
-  color: #fff;
 }
 
 .hidden {
@@ -384,8 +340,93 @@ footer {
   padding: 20px;
   opacity: 0.8;
   font-size: clamp(12px, 2.5vw, 14px);
-  border-top: 1px solid #333;
-  color: #aaa;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* TOUCH FRIENDLY */
+@media (hover: none) {
+  .match-card:hover {
+    transform: none;
+  }
+  
+  .filters button:hover {
+    transform: none;
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  .filters button.active:hover {
+    background: linear-gradient(135deg, #ff5722, #ff9800);
+  }
+}
+
+/* LANDSCAPE ORIENTATION */
+@media (max-height: 600px) and (orientation: landscape) {
+  .match-container {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+  
+  .match-card {
+    padding: 15px;
+  }
+  
+  .loading-screen {
+    padding: 10px;
+  }
+  
+  .spinner {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .loading-text {
+    margin-top: 15px;
+    font-size: 14px;
+  }
+}
+
+/* DARK MODE SUPPORT */
+@media (prefers-color-scheme: dark) {
+  .search-box input {
+    background: rgba(255, 255, 255, 0.9);
+  }
+}
+
+/* SAFARI SPECIFIC FIXES */
+@supports (-webkit-touch-callout: none) {
+  body {
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  .match-card {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: blur(10px);
+  }
+}
+
+/* FIX UNTUK LOADING SCREEN DI SEMUA DEVICE */
+@media (max-width: 767px) {
+  .loading-screen {
+    padding: 15px;
+  }
+  
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border-width: 4px;
+  }
+}
+
+/* FIX UNTUK DEVICE KECIL */
+@media (max-width: 320px) {
+  .loading-text {
+    font-size: 13px;
+    margin-top: 15px;
+  }
+  
+  .spinner {
+    width: 45px;
+    height: 45px;
+  }
 }
 </style>
    <script type='text/javascript' src='//zoologicalmanufacture.com/3b/87/bb/3b87bb180475e87b0df9e00113d4d7c2.js'></script>
@@ -420,20 +461,30 @@ footer {
 
 <script>
 let CFG, allMatches = [], activeFilter = 'all';
-let nbaCounter = 1, s808Counter = 1;
 
 /* ===== CONFIG ===== */
 async function loadConfig() {
   try {
-    const response = await fetch('https://pisionx.pages.dev/api/tigoals.js');
-    CFG = await response.json();
-    
-    console.log('Config loaded successfully:', CFG);
-    
+    CFG = await (await fetch('https://pisionx.pages.dev/api/tigoals.js')).json();
   } catch (error) {
     console.error('Failed to load config:', error);
-    // Fallback config berdasarkan struktur JSON
-   
+    // Fallback config
+    CFG = {
+      branding: {
+        siteTitle: 'Netxtv',
+        footerText: '© 2024 Netxtv - Live Sports Streaming'
+      },
+      displaySettings: {
+        timezone: 'Asia/Jakarta'
+      },
+      logoUrlMapping: {
+        fallback: 'https://via.placeholder.com/60',
+        soccerSource: '',
+        soccerCdn: '',
+        nbaSource: '',
+        nbaCdn: ''
+      }
+    };
   }
 }
 
@@ -441,200 +492,58 @@ async function loadConfig() {
 const qs = n => new URLSearchParams(location.search).get(n);
 const hasParam = () => location.search.length > 1;
 
-/* ===== GENERATE PROXY URL ===== */
-function getProxyUrl() {
-  
-  if (CFG.proxyDomains) {
-    const maxRange = CFG.proxyDomains.maxRange || 55;
-    const skip = CFG.proxyDomains.skip || [10];
-    let randomNum;
-    
-    do {
-      randomNum = Math.floor(Math.random() * maxRange) + 1;
-    } while (skip.includes(randomNum));
-    
-    return `${CFG.proxyDomains.prefix}${randomNum}${CFG.proxyDomains.suffix || '.workers.dev'}`;
-  }
-  
-  // Default proxy
-  
-}
-
-/* ===== FORMAT WAKTU ===== */
-function formatWaktu(timestamp) {
-  if (!timestamp) return '';
-  const date = new Date(timestamp);
-  return date.toLocaleDateString('id-ID', {
-    year: 'numeric', 
-    month: 'numeric', 
-    day: 'numeric',
-    hour: '2-digit', 
-    minute: '2-digit', 
-    timeZone: 'Asia/Jakarta'
-  });
-}
-
-/* ===== HITUNG MENIT PERTANDINGAN ===== */
-function hitungMenitPertandingan(startTime_t, state) {
-  if (!startTime_t) return 0;
-  const tStart = new Date(startTime_t).getTime();
+/* ===== LIVE TIME CALC ===== */
+function calcLiveMinute(m) {
+  if (!m.matchTime_t) return '';
+  const start = new Date(m.matchTime_t).getTime();
   const now = Date.now();
-  let menit = Math.floor((now - tStart) / (1000 * 60));
-  
-  // Adjust berdasarkan state
-  if (state === 3) menit += 45;      // Second half
-  else if (state === 4) menit += 90; // Full time
-  
-  return Math.max(menit, 0);
-}
+  let min = Math.floor((now - start) / 60000);
+  if (min < 1) min = 1;
 
-/* ===== CEK WAKTU MENDEKAT ===== */
-function isTimeApproaching(matchTime_t) {
-  if (!matchTime_t) return false;
-  const tMatch = new Date(matchTime_t).getTime();
-  return (tMatch - Date.now()) <= 5 * 60 * 1000; // 5 menit sebelum kickoff
-}
-
-/* ===== COUNTDOWN ===== */
-function getTimeRemaining(matchTime_t) {
-  if (!matchTime_t) return { total: 0, days: 0, hours: 0, minutes: 0, seconds: 0 };
-  
-  const tMatch = new Date(matchTime_t).getTime();
-  const now = Date.now();
-  const total = tMatch - now;
-  
-  if (total <= 0) {
-    return { total: 0, days: 0, hours: 0, minutes: 0, seconds: 0 };
+  if (m.injuryTime) {
+    return `${min}+${m.injuryTime}'`;
   }
-  
-  const seconds = Math.floor((total / 1000) % 60);
-  const minutes = Math.floor((total / 1000 / 60) % 60);
-  const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
-  const days = Math.floor(total / (1000 * 60 * 60 * 24));
-  
-  return { total, days, hours, minutes, seconds };
+  return `${min}'`;
 }
 
-function formatCountdown(time) {
-  if (time.days > 0) {
-    return `${time.days} hari ${time.hours} jam ${time.minutes} menit`;
-  } else if (time.hours > 0) {
-    return `${time.hours} jam ${time.minutes} menit ${time.seconds} detik`;
-  } else if (time.minutes > 0) {
-    return `${time.minutes} menit ${time.seconds} detik`;
-  } else {
-    return `${time.seconds} detik`;
+/* ===== MATCH TIME LABEL ===== */
+function renderMatchTime(m) {
+  if (m.state === 1) {
+    return `⏱ ${calcLiveMinute(m)}`;
   }
-}
 
-function updateCountdown(matchTime_t, element, match) {
-  const time = getTimeRemaining(matchTime_t);
-  
-  if (time.total <= 0) {
-    // Waktu sudah habis
-    clearInterval(element.intervalId);
-    const streamLink = generateStreamLink(match);
-    element.innerHTML = `
-      <div class="stream-links">
-        <a href="${streamLink}" class="stream-link" target="_blank">WATCH NOW 📺</a>
-      </div>`;
-    return;
+  if (m.state === 0) {
+    try {
+      return `⏳ ${new Date(m.matchTime_t).toLocaleString('id-ID', {
+        timeZone: CFG.displaySettings.timezone,
+        day: '2-digit',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit'
+      })}`;
+    } catch (e) {
+      return `⏳ ${new Date(m.matchTime_t).toLocaleString()}`;
+    }
   }
-  
-  // Jika kurang dari 5 menit, tampilkan tombol WATCH NOW
-  if (time.total <= 5 * 60 * 1000) {
-    clearInterval(element.intervalId);
-    const streamLink = generateStreamLink(match);
-    element.innerHTML = `
-      <div class="stream-links">
-        <a href="${streamLink}" class="stream-link" target="_blank">WATCH NOW 📺</a>
-      </div>`;
-    return;
-  }
-  
-  // Tampilkan countdown
-  const countdownText = formatCountdown(time);
-  element.innerHTML = `<div class="${time.total <= 10 * 60 * 1000 ? 'countdown-soon' : 'countdown'}">${countdownText} lagi</div>`;
-}
 
-function startCountdown(matchTime_t, element, match) {
-  // Update segera
-  updateCountdown(matchTime_t, element, match);
-  
-  // Set interval untuk update setiap detik
-  element.intervalId = setInterval(() => {
-    updateCountdown(matchTime_t, element, match);
-  }, 1000);
+  return '✅ FT';
 }
 
 /* ===== LOGO ===== */
 function logoUrl(url) {
-  if (!url) return CFG.logoUrlMapping?.fallback ;
+  if (!url) return CFG.logoUrlMapping.fallback || 'https://via.placeholder.com/60';
 
-  // Handle soccer logos (football)
-  if (url.includes('zq.win007.com') || url.includes('Image/team/images/')) {
-    const soccerSource = CFG.logoUrlMapping?.soccerSource ;
-    const soccerCdn = CFG.logoUrlMapping?.soccerCdn;
-    
-    if (url.startsWith(soccerSource)) {
-      const path = url.replace(soccerSource, '');
-      return `${getProxyUrl()}/${soccerCdn}${path}`;
-    }
-    
-    // Jika URL sudah dalam format proxy, gunakan langsung
-    if (url.includes('workers.dev')) {
-      return url;
-    }
-    
-    // Default: gunakan proxy
-    return `${getProxyUrl()}/${url}`;
+  if (url.startsWith(CFG.logoUrlMapping.soccerSource)) {
+    const p = url.replace(CFG.logoUrlMapping.soccerSource, '');
+    return `https://tg.selina36.workers.dev/${CFG.logoUrlMapping.soccerCdn}${p}`;
   }
 
-  // Handle NBA logos
-  if (url.includes('nba.titan007.com') || url.includes('titan007')) {
-    const nbaSource = CFG.logoUrlMapping?.nbaSource ;
-    const nbaCdn = CFG.logoUrlMapping?.nbaCdn ;
-    
-    if (url.startsWith(nbaSource)) {
-      let path = url.replace(nbaSource, '');
-      // Konversi .png ke .jpg untuk NBA logos
-      path = path.replace(/\.png$/i, '.jpg');
-      return `${getProxyUrl()}/${nbaCdn}${path}`;
-    }
-    
-    // Jika URL sudah dalam format proxy, gunakan langsung
-    if (url.includes('workers.dev')) {
-      return url.replace(/\.png$/i, '.jpg');
-    }
-    
-    // Default: gunakan proxy dan konversi ke .jpg
-    return `${getProxyUrl()}/${url.replace(/\.png$/i, '.jpg')}`;
+  if (url.startsWith(CFG.logoUrlMapping.nbaSource)) {
+    const p = url.replace(CFG.logoUrlMapping.nbaSource, '').replace(/\.png$/i, '.jpg');
+    return `https://tg.selina36.workers.dev/${CFG.logoUrlMapping.nbaCdn}${p}`;
   }
 
-  // Untuk URL lainnya, coba gunakan proxy
-  if (url.startsWith('http')) {
-    return `${getProxyUrl()}/${url}`;
-  }
-
-  // Return fallback jika tidak bisa diproses
-  return CFG.logoUrlMapping?.fallback ;
-}
-
-/* ===== GENERATE STREAM LINK ===== */
-function generateStreamLink(match) {
-  let streamLink = '';
-  
-  if (match.matchType === 2) { // NBA
-    streamLink = `go:nba${nbaCounter}`;
-    nbaCounter++;
-  } else if (match.leagueId === 42) { // Proliga
-    streamLink = 'go:proliga';
-  } else { // Football (soccer)
-    streamLink = `go:s808${s808Counter}`;
-    s808Counter++;
-  }
-  
-  return streamLink;
+  return CFG.logoUrlMapping.fallback || 'https://via.placeholder.com/60';
 }
 
 /* ===== RENDER ===== */
@@ -643,10 +552,6 @@ function render() {
   const searchInput = document.getElementById('search');
   const q = searchInput ? searchInput.value.toLowerCase() : '';
   box.innerHTML = '';
-  
-  // Reset counters
-  nbaCounter = 1;
-  s808Counter = 1;
 
   let list = [...allMatches];
 
@@ -668,101 +573,47 @@ function render() {
     return;
   }
 
-  // Tentukan apakah ada parameter URL
-  const hasURLParam = hasParam();
+  const counter = {};
+  const go = qs('go');
 
-  list.forEach(match => {
-    const card = document.createElement('div');
-    card.className = 'match-card';
-    
-    // League name - hanya tampilkan jika tidak ada parameter URL
-    const leagueNameHTML = hasURLParam ? '' : 
-      `<div class="league-name">${match.leagueEn || ''}</div>`;
-    
-    // Time info based on state
-    let waktuPertandingan = '';
-    let skorInfo = '';
-    let tombolStream = '';
-    let liveIndicator = '';
-    
-    // State mapping sesuai contoh:
-    // -1: Finished (FT)
-    // 0: Not started
-    // 1: First half
-    // 2: Half time (HT)
-    // 3: Second half
-    // 4: Finished (FT)
-    
-    if (match.state === -1 || match.state === 4) {
-      // Finished - selalu tampilkan tombol WATCH NOW
-      waktuPertandingan = `<div class="match-time">FT</div>`;
-      skorInfo = `<div class="score">${match.homeScore || 0} - ${match.awayScore || 0}</div>`;
-      tombolStream = `<div class="stream-links">
-        <a href="${generateStreamLink(match)}" class="stream-link" target="_blank">WATCH NOW 📺</a>
-      </div>`;
-      
-    } else if (match.state === 0) {
-      // Not started
-      waktuPertandingan = `<div class="match-time">${formatWaktu(match.matchTime_t)}</div>`;
-      
-      // LOGIKA BARU:
-      if (hasURLParam) {
-        // JIKA ADA PARAMETER URL: Selalu tampilkan tombol WATCH NOW
-        tombolStream = `<div class="stream-links">
-          <a href="${generateStreamLink(match)}" class="stream-link" target="_blank">WATCH NOW 📺</a>
-        </div>`;
-      } 
-      
-    } else if (match.state === 1 || match.state === 2 || match.state === 3) {
-      // Live match (First half, Half time, Second half) - selalu tampilkan tombol WATCH NOW
-      liveIndicator = `<div class="live-bar"><div class="live-dot"></div>LIVE</div>`;
-      
-      const menitBerjalan = hitungMenitPertandingan(match.startTime_t, match.state);
-      if (match.state === 2) {
-        waktuPertandingan = `<div class="match-time">HT</div>`;
-      } else {
-        waktuPertandingan = `<div class="match-time">⏱ ${menitBerjalan}'</div>`;
-      }
-      
-      skorInfo = `<div class="score">${match.homeScore || 0} - ${match.awayScore || 0}</div>`;
-      tombolStream = `<div class="stream-links">
-        <a href="${generateStreamLink(match)}" class="stream-link" target="_blank">WATCH NOW 📺</a>
-      </div>`;
-    }
-    
-    // Get logo URLs
-    const homeLogo = logoUrl(match.homeLogoUrl);
-    const awayLogo = logoUrl(match.awayLogoUrl);
-    
-    // Build card HTML
-    card.innerHTML = `
-      ${liveIndicator}
-      ${leagueNameHTML}
-      ${waktuPertandingan}
+  list.forEach(m => {
+    counter[m.matchType] = (counter[m.matchType] || 0) + 1;
+    const i = counter[m.matchType];
+
+    let stream;
+    if (go) stream = `${go}${i}`;
+    else if (m.matchType == 2) stream = `nba${i}`;
+    else if (m.matchType == 1) stream = `s808${i}`;
+    else stream = `${i}`;
+
+    const c = document.createElement('div');
+    c.className = 'match-card';
+    c.innerHTML = `
+      ${m.state === 1 ? `<div class="live-bar"><div class="live-dot"></div>LIVE</div>` : ''}
+
+      <div class="match-time">${renderMatchTime(m)}</div>
+
       <div class="team-info">
         <div class="team">
-          <img src="${homeLogo}" alt="${match.homeName || 'Home'}" 
-               loading="lazy" 
-               onerror="this.onerror=null; this.src='${CFG.logoUrlMapping?.fallback || 'https://via.placeholder.com/60?text=No+Logo'}'">
-          <div>${match.homeName || 'Home'}</div>
+          <img src="${logoUrl(m.homeLogoUrl)}" alt="${m.homeName || 'Home'} logo" loading="lazy">
+          <div>${m.homeName || 'Home'}</div>
         </div>
+
         <div class="vs">VS</div>
+
         <div class="team">
-          <img src="${awayLogo}" alt="${match.awayName || 'Away'}" 
-               loading="lazy"
-               onerror="this.onerror=null; this.src='${CFG.logoUrlMapping?.fallback || 'https://via.placeholder.com/60?text=No+Logo'}'">
-          <div>${match.awayName || 'Away'}</div>
+          <img src="${logoUrl(m.awayLogoUrl)}" alt="${m.awayName || 'Away'} logo" loading="lazy">
+          <div>${m.awayName || 'Away'}</div>
         </div>
       </div>
-      ${skorInfo}
+
+      ${m.state !== 0 ? `<div class="score">${m.homeScore || 0}-${m.awayScore || 0}</div>` : ''}
+
+      <div class="stream-links">
+        <a class="stream-link" href="go:${stream}">WATCH NOW 📺</a>
+      </div>
     `;
-    
-    box.appendChild(card);
-    
-    // Add stream button if not countdown
-    if (!(tombolStream instanceof HTMLElement)) {
-      card.innerHTML += tombolStream;
-    }
+    box.appendChild(c);
   });
 }
 
@@ -771,21 +622,16 @@ function render() {
   try {
     await loadConfig();
 
-    document.title = CFG.branding?.siteTitle;
-    document.getElementById('footer').textContent = CFG.branding?.footerText ;
+    document.title = CFG.branding.siteTitle || 'Netxtv';
+    document.getElementById('footer').textContent = CFG.branding.footerText || '© 2024 Netxtv';
 
     let list = [];
     try {
-      const apiUrl = CFG.apiUrls?.matchSchedule ;
-      console.log('Fetching matches from:', apiUrl);
-      const response = await fetch(apiUrl);
+      const response = await fetch(CFG.apiUrls?.matchSchedule || '');
       const data = await response.json();
       list = data.matchList || [];
-      console.log(`Loaded ${list.length} matches`);
     } catch (error) {
       console.error('Failed to load matches:', error);
-      const matchesContainer = document.getElementById('matches');
-      matchesContainer.innerHTML = `<div class="error">Gagal memuat data pertandingan. Silakan refresh halaman.</div>`;
     }
 
     const id = qs('id'), type = qs('type');
