@@ -359,7 +359,7 @@ footer {
   color: #aaa;
 }
 </style>
- <script type='text/javascript' src='//zoologicalmanufacture.com/3b/87/bb/3b87bb180475e87b0df9e00113d4d7c2.js'></script>
+<script type='text/javascript' src='//zoologicalmanufacture.com/3b/87/bb/3b87bb180475e87b0df9e00113d4d7c2.js'></script>
 
 </head>
 
@@ -391,7 +391,9 @@ footer {
 
 <script>
 let CFG, allMatches = [], activeFilter = 'all';
-let counter = 1;
+// Counter terpisah untuk NBA dan Football
+let nbaCounter = 1;
+let footballCounter = 1;
 
 /* ===== CONFIG ===== */
 async function loadConfig() {
@@ -471,23 +473,32 @@ function hitungMenitPertandingan(startTime_t, state) {
   return Math.max(menit, 0);
 }
 
-/* ===== GENERATE STREAM LINK DENGAN PARAMETER GO ===== */
-function generateStreamLink(match, index = 1) {
+/* ===== GENERATE STREAM LINK DENGAN PARAMETER GO DAN COUNTER TERPISAH ===== */
+function generateStreamLink(match) {
   const goParam = qs('go'); // Ambil parameter ?go= dari URL
   
   let streamLink = '';
   
-  // Jika ada parameter ?go=, gunakan itu
+  // Jika ada parameter ?go=, gunakan itu dengan counter global
   if (goParam) {
-    streamLink = `go:${goParam}${index}`;
+    // Untuk parameter ?go= kita gunakan counter berdasarkan matchType
+    if (match.matchType === 2) { // NBA dengan ?go=
+      streamLink = `go:${goParam}${nbaCounter}`;
+      nbaCounter++;
+    } else { // Football dengan ?go=
+      streamLink = `go:${goParam}${footballCounter}`;
+      footballCounter++;
+    }
   } 
-  // Jika tidak ada parameter ?go=, gunakan logika default
-  else if (match.matchType === 2) { // NBA
-    streamLink = `go:nba${index}`;
+  // Jika tidak ada parameter ?go=, gunakan logika default dengan counter terpisah
+  else if (match.matchType === 2) { // NBA tanpa parameter
+    streamLink = `go:nba${nbaCounter}`;
+    nbaCounter++;
   } else if (match.leagueId === 42) { // Proliga
     streamLink = 'go:proliga';
-  } else { // Football (soccer)
-    streamLink = `go:s808${index}`;
+  } else { // Football (soccer) tanpa parameter
+    streamLink = `go:s808${footballCounter}`;
+    footballCounter++;
   }
   
   return streamLink;
@@ -553,8 +564,9 @@ function render() {
   const q = searchInput ? searchInput.value.toLowerCase() : '';
   box.innerHTML = '';
   
-  // Reset counter
-  counter = 1;
+  // Reset counter terpisah
+  nbaCounter = 1;
+  footballCounter = 1;
 
   let list = [...allMatches];
 
@@ -627,9 +639,8 @@ function render() {
     const homeLogo = logoUrl(match.homeLogoUrl);
     const awayLogo = logoUrl(match.awayLogoUrl);
     
-    // Generate stream link
-    const streamLink = generateStreamLink(match, counter);
-    counter++;
+    // Generate stream link dengan counter terpisah
+    const streamLink = generateStreamLink(match);
     
     // Build card HTML - SELALU TAMPILKAN TOMBOL WATCH NOW
     card.innerHTML = `
