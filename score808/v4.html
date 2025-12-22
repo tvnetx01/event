@@ -6,7 +6,7 @@
 <title>Netxtv</title>
 
 <style>
-/* CSS tetap sama seperti sebelumnya */
+/* ================= GLOBAL ================= */
 * {
   margin: 0;
   padding: 0;
@@ -21,8 +21,7 @@ html, body {
 }
 
 body {
-  background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-  background-attachment: fixed;
+  background: #000000; /* Background hitam full */
   color: #fff;
   padding: 15px;
   -webkit-tap-highlight-color: transparent;
@@ -35,6 +34,7 @@ body {
   padding: 0 10px;
 }
 
+/* ================= LOADING ================= */
 .loading-screen {
   position: fixed;
   top: 0;
@@ -42,7 +42,7 @@ body {
   width: 100%;
   height: 100%;
   z-index: 9999;
-  background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+  background: #000000;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -82,6 +82,7 @@ body {
   100% { transform: rotate(360deg); }
 }
 
+/* ================= HEADER ================= */
 .league-title {
   text-align: center;
   font-size: clamp(1.2rem, 4vw, 1.6rem);
@@ -89,8 +90,10 @@ body {
   line-height: 1.3;
   padding: 0 10px;
   word-break: break-word;
+  color: #ffcc00;
 }
 
+/* ================= SEARCH & FILTER ================= */
 .search-box {
   text-align: center;
   margin-bottom: 15px;
@@ -102,17 +105,17 @@ body {
   max-width: 500px;
   padding: 12px 20px;
   border-radius: 30px;
-  border: none;
+  border: 2px solid #333;
   font-size: 16px;
-  background: rgba(255, 255, 255, 0.95);
-  color: #333;
+  background: #222;
+  color: #fff;
   transition: all 0.3s;
 }
 
 .search-box input:focus {
   outline: none;
+  border-color: #ff9800;
   box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.3);
-  transform: scale(1.02);
 }
 
 .filters {
@@ -126,9 +129,9 @@ body {
 
 .filters button {
   padding: 10px 20px;
-  border: none;
+  border: 2px solid #333;
   border-radius: 25px;
-  background: rgba(255, 255, 255, 0.15);
+  background: #222;
   color: #fff;
   font-weight: 600;
   cursor: pointer;
@@ -137,20 +140,20 @@ body {
   flex: 1;
   min-width: 100px;
   max-width: 150px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
 }
 
 .filters button:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: translateY(-2px);
+  background: #333;
+  border-color: #ff9800;
 }
 
 .filters button.active {
   background: linear-gradient(135deg, #ff5722, #ff9800);
+  border-color: #ff5722;
   box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
 }
 
+/* ================= MATCH CARD ================= */
 .match-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 350px), 1fr));
@@ -166,12 +169,10 @@ body {
 }
 
 .match-card {
-  background: rgba(255, 255, 255, 0.1);
+  background: #111;
   border-radius: 15px;
   padding: 20px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid #333;
   transition: transform 0.3s, box-shadow 0.3s;
   position: relative;
   overflow: hidden;
@@ -179,7 +180,21 @@ body {
 
 .match-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px rgba(255, 152, 0, 0.2);
+  border-color: #ff9800;
+}
+
+/* League name */
+.league-name {
+  text-align: center;
+  font-size: clamp(12px, 3vw, 14px);
+  color: #ffcc00;
+  font-weight: 600;
+  margin-bottom: 10px;
+  padding: 5px 10px;
+  background: #222;
+  border-radius: 20px;
+  text-transform: uppercase;
 }
 
 .match-time {
@@ -189,10 +204,11 @@ body {
   font-size: clamp(14px, 3vw, 16px);
   margin-bottom: 15px;
   padding: 5px;
-  background: rgba(0, 0, 0, 0.2);
+  background: #222;
   border-radius: 20px;
 }
 
+/* LIVE BAR */
 .live-bar {
   display: flex;
   align-items: center;
@@ -241,15 +257,17 @@ body {
   height: 60px;
   min-width: 50px;
   min-height: 50px;
-  background: #fff;
+  background: #222;
   border-radius: 50%;
   padding: 6px;
   object-fit: contain;
   transition: transform 0.3s;
+  border: 2px solid #333;
 }
 
 .team img:hover {
   transform: scale(1.1);
+  border-color: #ff9800;
 }
 
 .team div {
@@ -259,6 +277,7 @@ body {
   word-break: break-word;
   overflow-wrap: break-word;
   max-width: 100%;
+  color: #fff;
 }
 
 @media (max-width: 480px) {
@@ -316,73 +335,57 @@ body {
   background: linear-gradient(to right, #ff9800, #ff5722);
 }
 
-/* Countdown styles */
+/* ================= COUNTDOWN ================= */
+.countdown-container {
+  margin-top: 15px;
+}
+
 .countdown {
   text-align: center;
   color: #00ff6a;
   font-weight: bold;
   font-size: clamp(14px, 3vw, 16px);
-  margin-top: 15px;
-  padding: 10px;
-  background: rgba(0, 0, 0, 0.3);
+  padding: 12px;
+  background: #222;
   border-radius: 10px;
+  border: 1px solid #00ff6a;
   animation: pulse 2s infinite;
 }
 
-.refresh-notice {
+.countdown-soon {
   text-align: center;
-  margin-top: 15px;
-  padding: 15px;
-  background: rgba(255, 87, 34, 0.2);
-  border-radius: 10px;
-}
-
-.refresh-notice p {
-  margin-bottom: 10px;
-  font-size: 14px;
-}
-
-.refresh-button {
-  background: linear-gradient(to right, #ff5722, #ff9800);
-  color: white;
-  border: none;
-  padding: 8px 20px;
-  border-radius: 20px;
+  color: #ff9800;
   font-weight: bold;
-  cursor: pointer;
-  font-size: 13px;
+  font-size: clamp(14px, 3vw, 16px);
+  padding: 12px;
+  background: #222;
+  border-radius: 10px;
+  border: 1px solid #ff9800;
+  animation: pulse 1s infinite;
 }
 
+/* UTILITY CLASSES */
 .loading, .error, .no-matches {
   text-align: center;
   padding: 40px 20px;
   font-size: clamp(16px, 4vw, 18px);
   grid-column: 1 / -1;
+  color: #fff;
 }
 
 .hidden {
   display: none !important;
 }
 
+/* FOOTER */
 footer {
   text-align: center;
   margin-top: 40px;
   padding: 20px;
   opacity: 0.8;
   font-size: clamp(12px, 2.5vw, 14px);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.league-name {
-  text-align: center;
-  font-size: clamp(12px, 3vw, 14px);
-  color: #ffcc00;
-  font-weight: 600;
-  margin-bottom: 10px;
-  padding: 5px 10px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 20px;
-  text-transform: uppercase;
+  border-top: 1px solid #333;
+  color: #aaa;
 }
 </style>
 </head>
@@ -507,41 +510,74 @@ function isTimeApproaching(matchTime_t) {
 }
 
 /* ===== COUNTDOWN ===== */
-function tampilkanHitungMundur(matchTime_t, element) {
-  if (!matchTime_t) return;
-  const tMatch = new Date(matchTime_t).getTime();
-  const diff = tMatch - Date.now();
+function getTimeRemaining(matchTime_t) {
+  if (!matchTime_t) return { total: 0, days: 0, hours: 0, minutes: 0, seconds: 0 };
   
-  if (diff > 0) {
-    const jam = Math.floor(diff / (1000 * 60 * 60));
-    const menit = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const detik = Math.floor((diff % (1000 * 60)) / 1000);
-    
-    element.innerHTML = jam > 0
-      ? `<div class="countdown">${jam} jam ${menit} menit lagi</div>`
-      : `<div class="countdown">${menit} menit ${detik} detik lagi</div>`;
+  const tMatch = new Date(matchTime_t).getTime();
+  const now = Date.now();
+  const total = tMatch - now;
+  
+  if (total <= 0) {
+    return { total: 0, days: 0, hours: 0, minutes: 0, seconds: 0 };
+  }
+  
+  const seconds = Math.floor((total / 1000) % 60);
+  const minutes = Math.floor((total / 1000 / 60) % 60);
+  const hours = Math.floor((total / (1000 * 60 * 60)) % 24);
+  const days = Math.floor(total / (1000 * 60 * 60 * 24));
+  
+  return { total, days, hours, minutes, seconds };
+}
+
+function formatCountdown(time) {
+  if (time.days > 0) {
+    return `${time.days} hari ${time.hours} jam ${time.minutes} menit`;
+  } else if (time.hours > 0) {
+    return `${time.hours} jam ${time.minutes} menit ${time.seconds} detik`;
+  } else if (time.minutes > 0) {
+    return `${time.minutes} menit ${time.seconds} detik`;
   } else {
-    element.innerHTML = `
-      <div class="refresh-notice">
-        <p>Pertandingan sudah dimulai.</p>
-        <button onclick="location.reload()" class="refresh-button">Refresh</button>
-      </div>`;
+    return `${time.seconds} detik`;
   }
 }
 
-function mulaiHitungMundur(matchTime_t, element) {
-  const iv = setInterval(() => {
-    const tMatch = new Date(matchTime_t).getTime();
-    if (tMatch - Date.now() <= 0) {
-      clearInterval(iv);
-      element.innerHTML = `
-        <div class="stream-links">
-          <a href="go:s808${s808Counter}" class="stream-link" target="_blank">WATCH NOW 📺</a>
-        </div>`;
-      s808Counter++;
-    } else {
-      tampilkanHitungMundur(matchTime_t, element);
-    }
+function updateCountdown(matchTime_t, element, match) {
+  const time = getTimeRemaining(matchTime_t);
+  
+  if (time.total <= 0) {
+    // Waktu sudah habis
+    clearInterval(element.intervalId);
+    const streamLink = generateStreamLink(match);
+    element.innerHTML = `
+      <div class="stream-links">
+        <a href="${streamLink}" class="stream-link" target="_blank">WATCH NOW 📺</a>
+      </div>`;
+    return;
+  }
+  
+  // Jika kurang dari 5 menit, tampilkan tombol WATCH NOW
+  if (time.total <= 5 * 60 * 1000) {
+    clearInterval(element.intervalId);
+    const streamLink = generateStreamLink(match);
+    element.innerHTML = `
+      <div class="stream-links">
+        <a href="${streamLink}" class="stream-link" target="_blank">WATCH NOW 📺</a>
+      </div>`;
+    return;
+  }
+  
+  // Tampilkan countdown
+  const countdownText = formatCountdown(time);
+  element.innerHTML = `<div class="${time.total <= 10 * 60 * 1000 ? 'countdown-soon' : 'countdown'}">${countdownText} lagi</div>`;
+}
+
+function startCountdown(matchTime_t, element, match) {
+  // Update segera
+  updateCountdown(matchTime_t, element, match);
+  
+  // Set interval untuk update setiap detik
+  element.intervalId = setInterval(() => {
+    updateCountdown(matchTime_t, element, match);
   }, 1000);
 }
 
@@ -646,12 +682,16 @@ function render() {
     return;
   }
 
+  // Tentukan apakah ada parameter URL
+  const hasURLParam = hasParam();
+
   list.forEach(match => {
     const card = document.createElement('div');
     card.className = 'match-card';
     
-    // League name
-    const leagueName = match.leagueEn || '';
+    // League name - hanya tampilkan jika tidak ada parameter URL
+    const leagueNameHTML = hasURLParam ? '' : 
+      `<div class="league-name">${match.leagueEn || ''}</div>`;
     
     // Time info based on state
     let waktuPertandingan = '';
@@ -668,7 +708,7 @@ function render() {
     // 4: Finished (FT)
     
     if (match.state === -1 || match.state === 4) {
-      // Finished
+      // Finished - selalu tampilkan tombol WATCH NOW
       waktuPertandingan = `<div class="match-time">FT</div>`;
       skorInfo = `<div class="score">${match.homeScore || 0} - ${match.awayScore || 0}</div>`;
       tombolStream = `<div class="stream-links">
@@ -679,22 +719,25 @@ function render() {
       // Not started
       waktuPertandingan = `<div class="match-time">${formatWaktu(match.matchTime_t)}</div>`;
       
-      if (isTimeApproaching(match.matchTime_t)) {
-        // Less than 5 minutes to start - show stream button
+      // LOGIKA BARU:
+      if (hasURLParam) {
+        // JIKA ADA PARAMETER URL: Selalu tampilkan tombol WATCH NOW
         tombolStream = `<div class="stream-links">
           <a href="${generateStreamLink(match)}" class="stream-link" target="_blank">WATCH NOW 📺</a>
         </div>`;
       } else {
-        // Show countdown
+        // JIKA TIDAK ADA PARAMETER URL: Tampilkan countdown
         const countdownElement = document.createElement('div');
         countdownElement.className = 'countdown-container';
         tombolStream = countdownElement;
         card.appendChild(countdownElement);
-        mulaiHitungMundur(match.matchTime_t, countdownElement);
+        
+        // Mulai countdown
+        startCountdown(match.matchTime_t, countdownElement, match);
       }
       
     } else if (match.state === 1 || match.state === 2 || match.state === 3) {
-      // Live match (First half, Half time, Second half)
+      // Live match (First half, Half time, Second half) - selalu tampilkan tombol WATCH NOW
       liveIndicator = `<div class="live-bar"><div class="live-dot"></div>LIVE</div>`;
       
       const menitBerjalan = hitungMenitPertandingan(match.startTime_t, match.state);
@@ -717,7 +760,7 @@ function render() {
     // Build card HTML
     card.innerHTML = `
       ${liveIndicator}
-      <div class="league-name">${leagueName}</div>
+      ${leagueNameHTML}
       ${waktuPertandingan}
       <div class="team-info">
         <div class="team">
