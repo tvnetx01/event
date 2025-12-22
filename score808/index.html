@@ -2,138 +2,448 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
 <title>Netxtv</title>
 
 <style>
 /* ================= GLOBAL ================= */
-*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,Tahoma}
-html,body{min-height:100%}
-body{
-  background:linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);
-  background-attachment:fixed;
-  color:#fff;
-  padding:20px;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
 }
 
-.container{max-width:1100px;margin:auto}
+html, body {
+  min-height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+  background-attachment: fixed;
+  color: #fff;
+  padding: 15px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 10px;
+}
 
 /* ================= LOADING ================= */
-.loading-screen{
-  position:fixed;
-  inset:0;
-  z-index:9999;
-  background:linear-gradient(135deg,#1a2a6c,#b21f1f,#fdbb2d);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  transition:.5s;
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.5s, visibility 0.5s;
+  padding: 20px;
+  text-align: center;
 }
-.loading-screen.hide{opacity:0;visibility:hidden}
-.spinner{
-  width:70px;height:70px;
-  border:6px solid rgba(255,255,255,.25);
-  border-top:6px solid #fff;
-  border-radius:50%;
-  animation:spin 1s linear infinite;
+
+.loading-screen.hide {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
-@keyframes spin{to{transform:rotate(360deg)}}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 5px solid rgba(255, 255, 255, 0.25);
+  border-top: 5px solid #fff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+.loading-text {
+  margin-top: 20px;
+  font-weight: 600;
+  font-size: clamp(14px, 3vw, 16px);
+  color: #fff;
+  text-align: center;
+  max-width: 300px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
 /* ================= HEADER ================= */
-.league-title{text-align:center;font-size:1.6rem;margin:15px 0}
+.league-title {
+  text-align: center;
+  font-size: clamp(1.2rem, 4vw, 1.6rem);
+  margin: 10px 0 20px;
+  line-height: 1.3;
+  padding: 0 10px;
+  word-break: break-word;
+}
 
 /* ================= SEARCH & FILTER ================= */
-.search-box{text-align:center;margin-bottom:12px}
-.search-box input{
-  max-width:420px;width:100%;
-  padding:10px;border-radius:25px;border:none
+.search-box {
+  text-align: center;
+  margin-bottom: 15px;
+  padding: 0 10px;
 }
-.filters{display:flex;gap:10px;justify-content:center;margin-bottom:15px}
-.filters button{
-  padding:7px 16px;border:none;border-radius:20px;
-  background:rgba(255,255,255,.2);
-  color:#fff;font-weight:bold;cursor:pointer
+
+.search-box input {
+  width: 100%;
+  max-width: 500px;
+  padding: 12px 20px;
+  border-radius: 30px;
+  border: none;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+  transition: all 0.3s;
 }
-.filters button.active{background:#ff9800}
+
+.search-box input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.3);
+  transform: scale(1.02);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 20px;
+  padding: 0 10px;
+}
+
+.filters button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+  flex: 1;
+  min-width: 100px;
+  max-width: 150px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.filters button:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.filters button.active {
+  background: linear-gradient(135deg, #ff5722, #ff9800);
+  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+}
 
 /* ================= MATCH CARD ================= */
-.match-container{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(350px,1fr));
-  gap:12px
+.match-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 350px), 1fr));
+  gap: 15px;
+  padding: 0 5px;
 }
-.match-card{
-  background:rgba(255,255,255,.12);
-  border-radius:10px;
-  padding:16px
+
+@media (max-width: 768px) {
+  .match-container {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
 }
-.match-time{text-align:center;color:#ffcc00;font-weight:bold}
+
+.match-card {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.match-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.match-time {
+  text-align: center;
+  color: #ffcc00;
+  font-weight: bold;
+  font-size: clamp(14px, 3vw, 16px);
+  margin-bottom: 15px;
+  padding: 5px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+}
 
 /* LIVE BAR */
-.live-bar{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  font-weight:bold;
-  color:#00ff6a;
-  margin-bottom:6px;
-  animation:pulse 1.2s infinite;
-}
-.live-dot{
-  width:10px;height:10px;
-  background:#00ff6a;
-  border-radius:50%;
-}
-@keyframes pulse{
-  0%{opacity:1}
-  50%{opacity:.5}
-  100%{opacity:1}
+.live-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: bold;
+  color: #00ff6a;
+  margin-bottom: 10px;
+  animation: pulse 1.2s infinite;
+  font-size: clamp(14px, 3vw, 16px);
 }
 
-.team-info{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin:10px 0
-}
-.team{text-align:center;width:40%}
-.team img{
-  width:60px;height:60px;
-  background:#fff;border-radius:50%;padding:5px
-}
-.vs{font-weight:bold;color:#ffcc00}
-.score{text-align:center;color:#ffcc00;font-size:1.4rem}
-
-.stream-links{text-align:center;margin-top:10px}
-.stream-link{
-  background:linear-gradient(to right,#ff5722,#ff9800);
-  padding:8px 18px;border-radius:25px;
-  color:#fff;text-decoration:none;font-weight:bold
+.live-dot {
+  width: 12px;
+  height: 12px;
+  background: #00ff6a;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #00ff6a;
 }
 
-.loading,.error,.no-matches{text-align:center;padding:30px}
-.hidden{display:none}
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.team-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px 0;
+  gap: 10px;
+}
+
+.team {
+  text-align: center;
+  width: 45%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.team img {
+  width: 60px;
+  height: 60px;
+  min-width: 50px;
+  min-height: 50px;
+  background: #fff;
+  border-radius: 50%;
+  padding: 6px;
+  object-fit: contain;
+  transition: transform 0.3s;
+}
+
+.team img:hover {
+  transform: scale(1.1);
+}
+
+.team div {
+  font-size: clamp(12px, 2.5vw, 14px);
+  font-weight: 600;
+  line-height: 1.3;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+}
+
+@media (max-width: 480px) {
+  .team img {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .team div {
+    font-size: 12px;
+  }
+}
+
+.vs {
+  font-weight: bold;
+  color: #ffcc00;
+  font-size: clamp(16px, 4vw, 20px);
+  margin: 0 5px;
+}
+
+.score {
+  text-align: center;
+  color: #ffcc00;
+  font-size: clamp(1.6rem, 6vw, 2rem);
+  font-weight: bold;
+  margin: 15px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.stream-links {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.stream-link {
+  display: inline-block;
+  background: linear-gradient(to right, #ff5722, #ff9800);
+  padding: 14px 32px;
+  border-radius: 30px;
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: clamp(14px, 3vw, 16px);
+  transition: all 0.3s;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  max-width: 250px;
+  box-shadow: 0 4px 15px rgba(255, 87, 34, 0.3);
+}
+
+.stream-link:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(255, 87, 34, 0.4);
+  background: linear-gradient(to right, #ff9800, #ff5722);
+}
+
+/* UTILITY CLASSES */
+.loading, .error, .no-matches {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: clamp(16px, 4vw, 18px);
+  grid-column: 1 / -1;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* FOOTER */
+footer {
+  text-align: center;
+  margin-top: 40px;
+  padding: 20px;
+  opacity: 0.8;
+  font-size: clamp(12px, 2.5vw, 14px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* TOUCH FRIENDLY */
+@media (hover: none) {
+  .match-card:hover {
+    transform: none;
+  }
+  
+  .filters button:hover {
+    transform: none;
+    background: rgba(255, 255, 255, 0.15);
+  }
+  
+  .filters button.active:hover {
+    background: linear-gradient(135deg, #ff5722, #ff9800);
+  }
+}
+
+/* LANDSCAPE ORIENTATION */
+@media (max-height: 600px) and (orientation: landscape) {
+  .match-container {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+  
+  .match-card {
+    padding: 15px;
+  }
+  
+  .loading-screen {
+    padding: 10px;
+  }
+  
+  .spinner {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .loading-text {
+    margin-top: 15px;
+    font-size: 14px;
+  }
+}
+
+/* DARK MODE SUPPORT */
+@media (prefers-color-scheme: dark) {
+  .search-box input {
+    background: rgba(255, 255, 255, 0.9);
+  }
+}
+
+/* SAFARI SPECIFIC FIXES */
+@supports (-webkit-touch-callout: none) {
+  body {
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  .match-card {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: blur(10px);
+  }
+}
+
+/* FIX UNTUK LOADING SCREEN DI SEMUA DEVICE */
+@media (max-width: 767px) {
+  .loading-screen {
+    padding: 15px;
+  }
+  
+  .spinner {
+    width: 50px;
+    height: 50px;
+    border-width: 4px;
+  }
+}
+
+/* FIX UNTUK DEVICE KECIL */
+@media (max-width: 320px) {
+  .loading-text {
+    font-size: 13px;
+    margin-top: 15px;
+  }
+  
+  .spinner {
+    width: 45px;
+    height: 45px;
+  }
+}
 </style>
- <script type='text/javascript' src='//zoologicalmanufacture.com/3b/87/bb/3b87bb180475e87b0df9e00113d4d7c2.js'></script>
- <script src="https://pisionx.pages.dev/dazn.js"></script>
 </head>
 
 <body>
 
 <!-- LOADING -->
 <div id="loadingScreen" class="loading-screen">
-  <div>
-    <div class="spinner"></div>
-    <div style="margin-top:15px;font-weight:bold">Sabar... lagi loading ⚽🏀</div>
-  </div>
+  <div class="spinner"></div>
+  <div class="loading-text">Sabar... lagi loading ⚽🏀</div>
 </div>
 
 <div class="container">
   <h2 id="league-title" class="league-title"></h2>
 
   <div id="searchBox" class="search-box">
-    <input id="search" placeholder="Cari tim atau liga...">
+    <input id="search" type="text" placeholder="Cari tim atau liga..." autocomplete="off">
   </div>
 
   <div id="filterBox" class="filters">
@@ -145,14 +455,35 @@ body{
   <div id="matches" class="match-container"></div>
 </div>
 
-<footer id="footer" style="text-align:center;margin-top:30px;opacity:.8"></footer>
+<footer id="footer"></footer>
 
 <script>
-let CFG, allMatches=[], activeFilter='all';
+let CFG, allMatches = [], activeFilter = 'all';
 
 /* ===== CONFIG ===== */
-async function loadConfig(){
-  CFG = await (await fetch('https://pisionx.pages.dev/api/tigoals.js')).json();
+async function loadConfig() {
+  try {
+    CFG = await (await fetch('https://pisionx.pages.dev/api/tigoals.js')).json();
+  } catch (error) {
+    console.error('Failed to load config:', error);
+    // Fallback config
+    CFG = {
+      branding: {
+        siteTitle: 'Netxtv',
+        footerText: '© 2024 Netxtv - Live Sports Streaming'
+      },
+      displaySettings: {
+        timezone: 'Asia/Jakarta'
+      },
+      logoUrlMapping: {
+        fallback: 'https://via.placeholder.com/60',
+        soccerSource: '',
+        soccerCdn: '',
+        nbaSource: '',
+        nbaCdn: ''
+      }
+    };
+  }
 }
 
 /* ===== UTIL ===== */
@@ -160,90 +491,97 @@ const qs = n => new URLSearchParams(location.search).get(n);
 const hasParam = () => location.search.length > 1;
 
 /* ===== LIVE TIME CALC ===== */
-function calcLiveMinute(m){
-  if(!m.matchTime_t) return '';
+function calcLiveMinute(m) {
+  if (!m.matchTime_t) return '';
   const start = new Date(m.matchTime_t).getTime();
   const now = Date.now();
   let min = Math.floor((now - start) / 60000);
-  if(min < 1) min = 1;
+  if (min < 1) min = 1;
 
-  if(m.injuryTime){
+  if (m.injuryTime) {
     return `${min}+${m.injuryTime}'`;
   }
   return `${min}'`;
 }
 
 /* ===== MATCH TIME LABEL ===== */
-function renderMatchTime(m){
-  if(m.state === 1){
+function renderMatchTime(m) {
+  if (m.state === 1) {
     return `⏱ ${calcLiveMinute(m)}`;
   }
 
-  if(m.state === 0){
-    return `⏳ ${new Date(m.matchTime_t).toLocaleString('id-ID',{
-      timeZone: CFG.displaySettings.timezone,
-      day:'2-digit',month:'short',
-      hour:'2-digit',minute:'2-digit'
-    })}`;
+  if (m.state === 0) {
+    try {
+      return `⏳ ${new Date(m.matchTime_t).toLocaleString('id-ID', {
+        timeZone: CFG.displaySettings.timezone,
+        day: '2-digit',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit'
+      })}`;
+    } catch (e) {
+      return `⏳ ${new Date(m.matchTime_t).toLocaleString()}`;
+    }
   }
 
   return '✅ FT';
 }
 
 /* ===== LOGO ===== */
-function logoUrl(url){
-  if(!url) return CFG.logoUrlMapping.fallback;
+function logoUrl(url) {
+  if (!url) return CFG.logoUrlMapping.fallback || 'https://via.placeholder.com/60';
 
-  if(url.startsWith(CFG.logoUrlMapping.soccerSource)){
-    const p = url.replace(CFG.logoUrlMapping.soccerSource,'');
+  if (url.startsWith(CFG.logoUrlMapping.soccerSource)) {
+    const p = url.replace(CFG.logoUrlMapping.soccerSource, '');
     return `https://tg.selina36.workers.dev/${CFG.logoUrlMapping.soccerCdn}${p}`;
   }
 
-  if(url.startsWith(CFG.logoUrlMapping.nbaSource)){
-    const p = url.replace(CFG.logoUrlMapping.nbaSource,'').replace(/\.png$/i,'.jpg');
+  if (url.startsWith(CFG.logoUrlMapping.nbaSource)) {
+    const p = url.replace(CFG.logoUrlMapping.nbaSource, '').replace(/\.png$/i, '.jpg');
     return `https://tg.selina36.workers.dev/${CFG.logoUrlMapping.nbaCdn}${p}`;
   }
 
-  return CFG.logoUrlMapping.fallback;
+  return CFG.logoUrlMapping.fallback || 'https://via.placeholder.com/60';
 }
 
 /* ===== RENDER ===== */
-function render(){
+function render() {
   const box = document.getElementById('matches');
-  const q = document.getElementById('search').value.toLowerCase();
+  const searchInput = document.getElementById('search');
+  const q = searchInput ? searchInput.value.toLowerCase() : '';
   box.innerHTML = '';
 
   let list = [...allMatches];
 
-  if(!hasParam()){
-    if(activeFilter !== 'all'){
+  if (!hasParam()) {
+    if (activeFilter !== 'all') {
       list = list.filter(m => m.matchType == activeFilter);
     }
-    if(q){
+    if (q) {
       list = list.filter(m =>
-        m.homeName.toLowerCase().includes(q) ||
-        m.awayName.toLowerCase().includes(q) ||
+        (m.homeName || '').toLowerCase().includes(q) ||
+        (m.awayName || '').toLowerCase().includes(q) ||
         (m.leagueEn || '').toLowerCase().includes(q)
       );
     }
   }
 
-  if(!list.length){
-    box.innerHTML = `<div class="no-matches">Tidak ada pertandingan</div>`;
+  if (!list.length) {
+    box.innerHTML = `<div class="no-matches">Tidak ada pertandingan yang sesuai</div>`;
     return;
   }
 
   const counter = {};
   const go = qs('go');
 
-  list.forEach(m=>{
+  list.forEach(m => {
     counter[m.matchType] = (counter[m.matchType] || 0) + 1;
     const i = counter[m.matchType];
 
     let stream;
-    if(go) stream = `${go}${i}`;
-    else if(m.matchType == 2) stream = `nba${i}`;
-    else if(m.matchType == 1) stream = `s808${i}`;
+    if (go) stream = `${go}${i}`;
+    else if (m.matchType == 2) stream = `nba${i}`;
+    else if (m.matchType == 1) stream = `s808${i}`;
     else stream = `${i}`;
 
     const c = document.createElement('div');
@@ -255,19 +593,19 @@ function render(){
 
       <div class="team-info">
         <div class="team">
-          <img src="${logoUrl(m.homeLogoUrl)}">
-          <div>${m.homeName}</div>
+          <img src="${logoUrl(m.homeLogoUrl)}" alt="${m.homeName || 'Home'} logo" loading="lazy">
+          <div>${m.homeName || 'Home'}</div>
         </div>
 
         <div class="vs">VS</div>
 
         <div class="team">
-          <img src="${logoUrl(m.awayLogoUrl)}">
-          <div>${m.awayName}</div>
+          <img src="${logoUrl(m.awayLogoUrl)}" alt="${m.awayName || 'Away'} logo" loading="lazy">
+          <div>${m.awayName || 'Away'}</div>
         </div>
       </div>
 
-      ${m.state !== 0 ? `<div class="score">${m.homeScore}-${m.awayScore}</div>` : ''}
+      ${m.state !== 0 ? `<div class="score">${m.homeScore || 0}-${m.awayScore || 0}</div>` : ''}
 
       <div class="stream-links">
         <a class="stream-link" href="go:${stream}">WATCH NOW 📺</a>
@@ -278,46 +616,112 @@ function render(){
 }
 
 /* ===== INIT ===== */
-(async()=>{
-  await loadConfig();
+(async () => {
+  try {
+    await loadConfig();
 
-  document.title = CFG.branding.siteTitle;
-  document.getElementById('footer').textContent = CFG.branding.footerText;
+    document.title = CFG.branding.siteTitle || 'Netxtv';
+    document.getElementById('footer').textContent = CFG.branding.footerText || '© 2024 Netxtv';
 
-  let list = (await (await fetch(CFG.apiUrls.matchSchedule)).json()).matchList || [];
+    let list = [];
+    try {
+      const response = await fetch(CFG.apiUrls?.matchSchedule || '');
+      const data = await response.json();
+      list = data.matchList || [];
+    } catch (error) {
+      console.error('Failed to load matches:', error);
+    }
 
-  const id = qs('id'), type = qs('type');
-  if(id){
-    list = list.filter(x => x.leagueId == id);
-    document.getElementById('league-title').textContent = list[0]?.leagueEn || '';
+    const id = qs('id'), type = qs('type');
+    if (id) {
+      list = list.filter(x => x.leagueId == id);
+      const leagueTitle = document.getElementById('league-title');
+      if (leagueTitle && list[0]?.leagueEn) {
+        leagueTitle.textContent = list[0].leagueEn;
+      }
+    }
+    if (type) {
+      list = list.filter(x => x.matchType == type);
+    }
+
+    allMatches = list;
+
+    if (hasParam()) {
+      const searchBox = document.getElementById('searchBox');
+      const filterBox = document.getElementById('filterBox');
+      if (searchBox) searchBox.classList.add('hidden');
+      if (filterBox) filterBox.classList.add('hidden');
+    }
+
+    render();
+
+    const searchInput = document.getElementById('search');
+    if (searchInput) {
+      let searchTimeout;
+      searchInput.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(render, 300);
+      });
+    }
+
+    document.querySelectorAll('.filters button').forEach(b => {
+      b.addEventListener('click', () => {
+        document.querySelectorAll('.filters button').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+        activeFilter = b.dataset.type;
+        render();
+      });
+    });
+
+    // Hide loading screen
+    setTimeout(() => {
+      const loadingScreen = document.getElementById('loadingScreen');
+      if (loadingScreen) {
+        loadingScreen.classList.add('hide');
+        setTimeout(() => {
+          loadingScreen.style.display = 'none';
+        }, 500);
+      }
+    }, 800);
+
+    // Auto update every 30 seconds
+    setInterval(render, 30000);
+
+    // Handle orientation change
+    window.addEventListener('orientationchange', () => {
+      setTimeout(render, 100);
+    });
+
+    // Handle resize
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(render, 250);
+    });
+
+  } catch (error) {
+    console.error('Initialization error:', error);
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+      loadingScreen.innerHTML = `
+        <div style="text-align: center; padding: 20px; max-width: 300px;">
+          <div style="color: #ff6b6b; margin-bottom: 20px; font-size: 16px;">⚠️ Gagal memuat data</div>
+          <button onclick="location.reload()" style="
+            background: linear-gradient(to right, #ff5722, #ff9800);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            width: 100%;
+            max-width: 200px;
+          ">Coba Lagi</button>
+        </div>
+      `;
+    }
   }
-  if(type){
-    list = list.filter(x => x.matchType == type);
-  }
-
-  allMatches = list;
-
-  if(hasParam()){
-    searchBox.classList.add('hidden');
-    filterBox.classList.add('hidden');
-  }
-
-  render();
-  document.getElementById('search').oninput = render;
-
-  document.querySelectorAll('.filters button').forEach(b=>{
-    b.onclick = ()=>{
-      document.querySelectorAll('.filters button').forEach(x=>x.classList.remove('active'));
-      b.classList.add('active');
-      activeFilter = b.dataset.type;
-      render();
-    };
-  });
-
-  setTimeout(()=>loadingScreen.classList.add('hide'),300);
-
-  /* AUTO UPDATE LIVE TIME */
-  setInterval(render, 30000);
 })();
 </script>
 
