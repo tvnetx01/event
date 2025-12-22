@@ -388,6 +388,8 @@ footer {
   color: #aaa;
 }
 </style>
+   <script type='text/javascript' src='//zoologicalmanufacture.com/3b/87/bb/3b87bb180475e87b0df9e00113d4d7c2.js'></script>
+
 </head>
 
 <body>
@@ -431,23 +433,7 @@ async function loadConfig() {
   } catch (error) {
     console.error('Failed to load config:', error);
     // Fallback config berdasarkan struktur JSON
-    CFG = {
-      logoUrlMapping: {
-        soccerSource: "http://zq.win007.com/Image/team/images/",
-        soccerCdn: "https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/",
-        nbaSource: "http://nba.titan007.com",
-        nbaCdn: "https://cfcdn.djimf3u4en.cfd/nbawin007",
-        fallback: "https://via.placeholder.com/60?text=No+Logo"
-      },
-      streamingLinks: {
-        nbaUrlPrefix: "go:nba",
-        s808UrlPrefix: "go:s808"
-      },
-      branding: {
-        siteTitle: 'Netxtv',
-        footerText: '© 2026 Netxtv'
-      }
-    };
+   
   }
 }
 
@@ -457,7 +443,7 @@ const hasParam = () => location.search.length > 1;
 
 /* ===== GENERATE PROXY URL ===== */
 function getProxyUrl() {
-  // Coba gunakan proxy dari config, jika ada
+  
   if (CFG.proxyDomains) {
     const maxRange = CFG.proxyDomains.maxRange || 55;
     const skip = CFG.proxyDomains.skip || [10];
@@ -467,11 +453,11 @@ function getProxyUrl() {
       randomNum = Math.floor(Math.random() * maxRange) + 1;
     } while (skip.includes(randomNum));
     
-    return `${CFG.proxyDomains.prefix || 'https://tg.selina'}${randomNum}${CFG.proxyDomains.suffix || '.workers.dev'}`;
+    return `${CFG.proxyDomains.prefix}${randomNum}${CFG.proxyDomains.suffix || '.workers.dev'}`;
   }
   
   // Default proxy
-  return 'https://tg.selina36.workers.dev';
+  
 }
 
 /* ===== FORMAT WAKTU ===== */
@@ -583,12 +569,12 @@ function startCountdown(matchTime_t, element, match) {
 
 /* ===== LOGO ===== */
 function logoUrl(url) {
-  if (!url) return CFG.logoUrlMapping?.fallback || 'https://via.placeholder.com/60?text=No+Logo';
+  if (!url) return CFG.logoUrlMapping?.fallback ;
 
   // Handle soccer logos (football)
   if (url.includes('zq.win007.com') || url.includes('Image/team/images/')) {
-    const soccerSource = CFG.logoUrlMapping?.soccerSource || 'http://zq.win007.com/Image/team/images/';
-    const soccerCdn = CFG.logoUrlMapping?.soccerCdn || 'https://cfcdn.xdapiym5297.com/zqwin007/Image/team/images/';
+    const soccerSource = CFG.logoUrlMapping?.soccerSource ;
+    const soccerCdn = CFG.logoUrlMapping?.soccerCdn;
     
     if (url.startsWith(soccerSource)) {
       const path = url.replace(soccerSource, '');
@@ -606,8 +592,8 @@ function logoUrl(url) {
 
   // Handle NBA logos
   if (url.includes('nba.titan007.com') || url.includes('titan007')) {
-    const nbaSource = CFG.logoUrlMapping?.nbaSource || 'http://nba.titan007.com';
-    const nbaCdn = CFG.logoUrlMapping?.nbaCdn || 'https://cfcdn.djimf3u4en.cfd/nbawin007';
+    const nbaSource = CFG.logoUrlMapping?.nbaSource ;
+    const nbaCdn = CFG.logoUrlMapping?.nbaCdn ;
     
     if (url.startsWith(nbaSource)) {
       let path = url.replace(nbaSource, '');
@@ -631,7 +617,7 @@ function logoUrl(url) {
   }
 
   // Return fallback jika tidak bisa diproses
-  return CFG.logoUrlMapping?.fallback || 'https://via.placeholder.com/60?text=No+Logo';
+  return CFG.logoUrlMapping?.fallback ;
 }
 
 /* ===== GENERATE STREAM LINK ===== */
@@ -725,16 +711,7 @@ function render() {
         tombolStream = `<div class="stream-links">
           <a href="${generateStreamLink(match)}" class="stream-link" target="_blank">WATCH NOW 📺</a>
         </div>`;
-      } else {
-        // JIKA TIDAK ADA PARAMETER URL: Tampilkan countdown
-        const countdownElement = document.createElement('div');
-        countdownElement.className = 'countdown-container';
-        tombolStream = countdownElement;
-        card.appendChild(countdownElement);
-        
-        // Mulai countdown
-        startCountdown(match.matchTime_t, countdownElement, match);
-      }
+      } 
       
     } else if (match.state === 1 || match.state === 2 || match.state === 3) {
       // Live match (First half, Half time, Second half) - selalu tampilkan tombol WATCH NOW
@@ -794,12 +771,12 @@ function render() {
   try {
     await loadConfig();
 
-    document.title = CFG.branding?.siteTitle || 'Netxtv';
-    document.getElementById('footer').textContent = CFG.branding?.footerText || '© 2026 Netxtv';
+    document.title = CFG.branding?.siteTitle;
+    document.getElementById('footer').textContent = CFG.branding?.footerText ;
 
     let list = [];
     try {
-      const apiUrl = CFG.apiUrls?.matchSchedule || 'https://dapiab.djimf3u4en.cfd/api/merge/schedules?lang=4';
+      const apiUrl = CFG.apiUrls?.matchSchedule ;
       console.log('Fetching matches from:', apiUrl);
       const response = await fetch(apiUrl);
       const data = await response.json();
